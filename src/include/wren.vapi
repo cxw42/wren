@@ -25,6 +25,33 @@ namespace Wren {
   {
   }
 
+  /**
+   * Reference-counted wrapper for Handle.
+   *
+   * Use this instead of a bare Handle whenever possible.
+   */
+  public class HandleAuto
+  {
+    private VM vm;
+    private Handle handle;
+
+    internal Handle GetHandle()
+    {
+      return handle;
+    }
+
+    public HandleAuto(VM vm, Handle handle)
+    {
+      this.vm = vm;
+      this.handle = handle;
+    }
+
+    ~HandleAuto()
+    {
+      vm.ReleaseHandle(handle);
+    }
+  }
+
   [CCode(delegate_target_pos = 2)]
   public delegate void *ReallocateFn(void *memory, size_t newSize);
 
@@ -112,7 +139,13 @@ namespace Wren {
   public extern void InitConfiguration(ref Configuration configuration);
 
   // For some reason, I have to repeat cheader_filename here.  I don't know why.
-  /** Virtual machine */
+  /**
+   * Virtual machine.
+   *
+   * This class includes all functions taking a WrenVM as the first parameter.
+   * It also includes {@link HandleAuto} equivalents of all the {@link Handle}
+   * functions.
+   */
   [CCode(cheader_filename = "wren.h", free_function = "wrenFreeVM",
          has_type_id = false, cprefix="wren")]
   [Compact]
@@ -127,50 +160,72 @@ namespace Wren {
     public InterpretResult Interpret(string module, string source);
 
     public Handle MakeCallHandle(string signature);
+
+    /** Make a HandleAuto for a function */
+    public HandleAuto MakeCallHandleAuto(string signature)
+    {
+      return new HandleAuto(this, MakeCallHandle(signature));
+    }
+
     public InterpretResult Call(Handle method);
-    void ReleaseHandle(owned Handle handle);
+    public InterpretResult CallAuto(HandleAuto method)
+    {
+      return Call(method.GetHandle());
+    }
 
-    int GetSlotCount();
-    void EnsireSlots(int numSlots);
+    public void ReleaseHandle(Handle handle);
 
-    Type GetSlotType(int slot);
-    bool GetSlotBool(int slot);
-    unowned uint8[] GetSlotBytes(int slot);
-    double GetSlotDouble(int slot);
-    void *GetSlotForeign(int slot);
-    unowned string GetSlotString(int slot);
-    Handle GetSlotHAndle(int slot);
+    public int GetSlotCount();
+    public void EnsireSlots(int numSlots);
 
-    void SetSlotBool(int slot, bool value);
-    void SetSlotBytes(int slot, uint8[] bytes);
-    void SetSlotDouble(int slot, double value);
-    void *SetSlotNewForeign(int slot, int classSlot, size_t size);
-    void SetSlotNewList(int slot);
-    void SetSlotNewMap(int slot);
-    void SetSlotNull(int slot);
-    void SetSlotString(int slot, string text);
-    void SetSlotHandle(int slot, Handle handle);
+    public Type GetSlotType(int slot);
+    public bool GetSlotBool(int slot);
+    public unowned uint8[] GetSlotBytes(int slot);
+    public double GetSlotDouble(int slot);
+    public void *GetSlotForeign(int slot);
+    public unowned string GetSlotString(int slot);
+    public Handle GetSlotHandle(int slot);
 
-    int GetListCount(int slot);
-    void GetListElement(int listSlot, int index, int elementSlot);
-    void SetListElement(int listSlot, int index, int elementSlot);
-    void InsertInList(int listSlot, int index, int elementSlot);
+    public HandleAuto GetSlotHandleAuto(int slot)
+    {
+      return new HandleAuto(this, GetSlotHandle(slot));
+    }
 
-    int GetMapCount(int slot);
-    int GetMapContainsKey(int mapSlot, int keySlot);
-    void GetMapValue(int mapSlot, int keySlot, int elementSlot);
-    void SetMapValue(int mapSlot, int keySlot, int elementSlot);
-    void RemoveMapValue(int mapSlot, int keySlot, int removedValueSlot);
+    public void SetSlotBool(int slot, bool value);
+    public void SetSlotBytes(int slot, uint8[] bytes);
+    public void SetSlotDouble(int slot, double value);
+    public void *SetSlotNewForeign(int slot, int classSlot, size_t size);
+    public void SetSlotNewList(int slot);
+    public void SetSlotNewMap(int slot);
+    public void SetSlotNull(int slot);
+    public void SetSlotString(int slot, string text);
+    public void SetSlotHandle(int slot, Handle handle);
 
-    void GetVariable(string module, string name);
-    bool HasVariable(string module, string name);
+    public void SetSlotHandleAuto(int slot, HandleAuto handle)
+    {
+      SetSlotHandle(slot, handle.GetHandle());
+    }
 
-    bool HasModule(string module);
+    public int GetListCount(int slot);
+    public void GetListElement(int listSlot, int index, int elementSlot);
+    public void SetListElement(int listSlot, int index, int elementSlot);
+    public void InsertInList(int listSlot, int index, int elementSlot);
 
-    void AbortFiber(int slot);
+    public int GetMapCount(int slot);
+    public int GetMapContainsKey(int mapSlot, int keySlot);
+    public void GetMapValue(int mapSlot, int keySlot, int elementSlot);
+    public void SetMapValue(int mapSlot, int keySlot, int elementSlot);
+    public void RemoveMapValue(int mapSlot, int keySlot, int removedValueSlot);
 
-    void *GetUserData();
-    void SetUserData(void *userData);
+    public void GetVariable(string module, string name);
+    public bool HasVariable(string module, string name);
+
+    public bool HasModule(string module);
+
+    public void AbortFiber(int slot);
+
+    public void *GetUserData();
+    public void SetUserData(void *userData);
   } //class VM
 
 } //namespace Wren
