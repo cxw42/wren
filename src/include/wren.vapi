@@ -33,14 +33,14 @@ namespace Wren {
   public class HandleAuto
   {
     private VM vm;
-    private unowned Handle handle;
+    private Handle handle;
 
     internal unowned Handle GetHandle()
     {
       return handle;
     }
 
-    public HandleAuto(VM vm, Handle handle)
+    public HandleAuto(VM vm, owned Handle handle)
     {
       this.vm = vm;
       this.handle = handle;
@@ -48,7 +48,7 @@ namespace Wren {
 
     ~HandleAuto()
     {
-      vm.ReleaseHandle(handle);
+      vm.ReleaseHandle((owned)handle);
     }
   }
 
@@ -159,7 +159,13 @@ namespace Wren {
 
     public InterpretResult Interpret(string module, string source);
 
-    public unowned Handle MakeCallHandle(string signature);
+    /**
+     * Create a new handle for a method of the given signature.
+     *
+     * The resulting handle can be used with any receiver that provides
+     * a function matching that signature.
+     */
+    public Handle MakeCallHandle(string signature);
 
     /** Make a HandleAuto for a function */
     public HandleAuto MakeCallHandleAuto(string signature)
@@ -173,7 +179,7 @@ namespace Wren {
       return Call(method.GetHandle());
     }
 
-    public void ReleaseHandle(Handle handle);
+    public void ReleaseHandle(owned Handle handle);
 
     public int GetSlotCount();
     public void EnsureSlots(int numSlots);
@@ -184,7 +190,9 @@ namespace Wren {
     public double GetSlotDouble(int slot);
     public void *GetSlotForeign(int slot);
     public unowned string GetSlotString(int slot);
-    public unowned Handle GetSlotHandle(int slot);
+
+    /** Create a new handle for the value in the given slot */
+    public Handle GetSlotHandle(int slot);
 
     public HandleAuto GetSlotHandleAuto(int slot)
     {
