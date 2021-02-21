@@ -33,9 +33,9 @@ namespace Wren {
   public class HandleAuto
   {
     private VM vm;
-    private Handle handle;
+    private unowned Handle handle;
 
-    internal Handle GetHandle()
+    internal unowned Handle GetHandle()
     {
       return handle;
     }
@@ -86,7 +86,7 @@ namespace Wren {
   [CCode(has_target = false)]
   public delegate void WriteFn(VM vm, string text);
 
-  [CCode()]
+  [CCode(cprefix = "WREN_ERROR_", has_type_id = false)]
   public enum ErrorType
   {
     COMPILE,
@@ -159,7 +159,7 @@ namespace Wren {
 
     public InterpretResult Interpret(string module, string source);
 
-    public Handle MakeCallHandle(string signature);
+    public unowned Handle MakeCallHandle(string signature);
 
     /** Make a HandleAuto for a function */
     public HandleAuto MakeCallHandleAuto(string signature)
@@ -176,7 +176,7 @@ namespace Wren {
     public void ReleaseHandle(Handle handle);
 
     public int GetSlotCount();
-    public void EnsireSlots(int numSlots);
+    public void EnsureSlots(int numSlots);
 
     public Type GetSlotType(int slot);
     public bool GetSlotBool(int slot);
@@ -184,7 +184,7 @@ namespace Wren {
     public double GetSlotDouble(int slot);
     public void *GetSlotForeign(int slot);
     public unowned string GetSlotString(int slot);
-    public Handle GetSlotHandle(int slot);
+    public unowned Handle GetSlotHandle(int slot);
 
     public HandleAuto GetSlotHandleAuto(int slot)
     {
@@ -217,7 +217,7 @@ namespace Wren {
     public void SetMapValue(int mapSlot, int keySlot, int elementSlot);
     public void RemoveMapValue(int mapSlot, int keySlot, int removedValueSlot);
 
-    public void GetVariable(string module, string name);
+    public void GetVariable(string module, string name, int slot);
     public bool HasVariable(string module, string name);
 
     public bool HasModule(string module);
