@@ -1,4 +1,4 @@
-// wren.vapi: Vala bindings for Wren
+// libwren.vapi: Vala bindings for Wren
 // See wren.h for documentation.  This file is in the same order as wren.h.
 //
 // By Christopher White <cxwembedded@gmail.com>
