@@ -77,7 +77,9 @@ return that argument, so this exists purely as a convenience method for you.
 
 (Why couldn't you just say `var someFn = { 2+2 }`?  Because Wren sees the `{`
 as the beginning of a [Map][] literal, not as the beginning of a function.
-<https://github.com/wren-lang/wren/blob/5b290cacc54e4810fd4008de14fc0b5008eaa450/src/vm/wren_compiler.c#L2619>)
+<https://github.com/wren-lang/wren/blob/5b290cacc54e4810fd4008de14fc0b5008eaa450/src/vm/wren_compiler.c#L2619>,
+called from 
+<https://github.com/wren-lang/wren/blob/5b290cacc54e4810fd4008de14fc0b5008eaa450/src/vm/wren_compiler.c#L3451>)
 
 [Map]: map.html
 
