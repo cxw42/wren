@@ -26,7 +26,7 @@
 
 int APITest_Run(WrenVM* vm, const char* inTestName);
 
-WrenForeignMethodFn APITest_bindForeignMethod(
+WrenBindForeignMethodResult APITest_bindForeignMethod(
     WrenVM* vm, const char* module, const char* className,
     bool isStatic, const char* signature);
 
