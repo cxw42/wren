@@ -377,6 +377,9 @@ typedef struct
 {
   MethodType type;
 
+  // Userdata for foreign methods
+  void *userData;
+
   // The method function itself. The [type] determines which field of the union
   // is used.
   union
