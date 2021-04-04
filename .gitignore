@@ -1,8 +1,10 @@
 # Build outputs
 /bin
 /lib
+
 # Intermediate files
 *.obj
+*.o
 Debug/
 Release/
 /build
@@ -39,3 +41,9 @@ ipch/
 
 # macOS
 .DS_Store
+
+# Automake (e.g., when Wren is built as a subproject)
+*.lo
+*.la
+.deps/
+.dirstamp
