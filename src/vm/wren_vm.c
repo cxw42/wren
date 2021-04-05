@@ -588,7 +588,7 @@ static void bindForeignClass(WrenVM* vm, ObjClass* classObj, ObjModule* module)
   
   Method method;
   method.type = METHOD_FOREIGN;
-  method.userData = NULL;
+  method.userData = methods.userData;
 
   // Add the symbol even if there is no allocator so we can ensure that the
   // symbol itself is always in the symbol table.
@@ -605,6 +605,7 @@ static void bindForeignClass(WrenVM* vm, ObjClass* classObj, ObjModule* module)
   if (methods.finalize != NULL)
   {
     method.as.foreign = (WrenForeignMethodFn)methods.finalize;
+    method.userData = NULL; // finalizer only gets the wrapped memory
     wrenBindMethod(vm, classObj, symbol, method);
   }
 }
@@ -648,7 +649,6 @@ static void createForeign(WrenVM* vm, ObjFiber* fiber, Value* stack)
   ASSERT(classObj->methods.count > symbol, "Class should have allocator.");
   Method* method = &classObj->methods.data[symbol];
   ASSERT(method->type == METHOD_FOREIGN, "Allocator should be foreign.");
-  // TODO userData when binding classes
 
   // Pass the constructor arguments to the allocator as well.
   ASSERT(vm->apiStack == NULL, "Cannot already be in foreign call.");

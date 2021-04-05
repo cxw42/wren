@@ -148,11 +148,16 @@ typedef struct
   // [wrenSetSlotNewForeign()] exactly once.
   WrenForeignMethodFn allocate;
 
+  // value passed to [allocate] as userData
+  void* userData;
+
   // The callback invoked when the garbage collector is about to collect a
   // foreign object's memory.
   //
   // This may be `NULL` if the foreign class does not need to finalize.
+  // Note: the finalizer does not receive [userData].
   WrenFinalizerFn finalize;
+
 } WrenForeignClassMethods;
 
 // Returns a pair of pointers to the foreign methods used to allocate and
