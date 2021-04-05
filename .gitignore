@@ -47,3 +47,8 @@ ipch/
 *.la
 .deps/
 .dirstamp
+.libs/
+
+# Code coverage
+*.gcda
+*.gcno
