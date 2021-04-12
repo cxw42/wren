@@ -1,0 +1,31 @@
+// Original - from wren-toml [1]                // option 1 as I understand it                  // option 2 as I understand it                  // option 3
+if (TOMLScanner.isAlphanumeric(char)) {         if (TOMLScanner.isAlphanumeric(char)) {         if (TOMLScanner.isAlphanumeric(char)) {         if (TOMLScanner.isAlphanumeric(char)) {
+  scanAlphanumeric()                              scanAlphanumeric()                              scanAlphanumeric()                              scanAlphanumeric()
+} else if (TOMLScanner.isWhitespace(char)) {    } else if (TOMLScanner.isWhitespace(char)) {    } else if (TOMLScanner.isWhitespace(char)) {    } else if (TOMLScanner.isWhitespace(char)) {  
+  // No-op.                                       // No-op.                                       // No-op.                                       // No-op.
+} else if (char == "=") {                       } else switch(char) {                           } else switch(char) {                           } else switch(char) {
+  addToken(Equal)                                 "=": addToken(Equal)                            case "=": addToken(Equal)                       ("=") addToken(Equal)
+} else if (char == "\"") {                        "\"": {                                         case "\"":                                      ("\"") {
+  if (peek() == "\"") {                             if (peek() == "\"") {                           if (peek() == "\"") {                           if (peek() == "\"") {
+    advance()                                         advance()                                       advance()                                       advance()
+    elidedMultiline() // removed for brevity          elidedMultiline()                               elidedMultiline()                               elidedMultiline()
+  } else {                                          } else {                                        } else {                                        } else {
+    scanString()                                      scanString()                                    scanString()                                    scanString()
+  }                                                 }                                               }                                               }
+} else if (char == "#") {                         }                                               case "#": scanComment()                         }
+  scanComment()                                   "#": scanComment()                              case "[": addToken(LeftBracket)                 ("#") scanComment()
+} else if (char == "[") {                         "[": addToken(LeftBracket)                      case "]": addToken(RightBracket)                ("[") addToken(LeftBracket)
+  addToken(LeftBracket)                           "]": addToken(RightBracket)                     case "'": scanString("'")                       ("]") addToken(RightBracket)
+} else if (char == "]") {                         "'": scanString("'")                            case ",": addToken(Comma)                       ("'") scanString("'")
+  addToken(RightBracket)                          ",": addToken(Comma)                            case "{": addToken(LeftBrace)                   (",") addToken(Comma)
+} else if (char == "'") {                         "{": addToken(LeftBrace)                        case "}": addToken(RightBrace)                  ("{") addToken(LeftBrace)
+  scanString("'")                                 "}": addToken(RightBrace)                       default throwScannerError()                     ("}") addToken(RightBrace)
+} else if (char == ",") {                         else throwScannerError()                      }                                                 else throwScannerError()
+  addToken(Comma)                               }                                               //                                              }
+} else if (char == "{") {
+  addToken(LeftBrace)
+} else if (char == "}") {
+  addToken(RightBrace)
+} else {
+  throwScannerError()
+}
