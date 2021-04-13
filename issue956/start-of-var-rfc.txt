@@ -1,0 +1,36 @@
+[RFC]: declarations in flow-control headers (if(var x=expr), while(var x=expr))
+
+(Apologies if this is a duplicate --- I looked in the issues but didn't see it.)  (Forked off https://github.com/wren-lang/wren/issues/956#issuecomment-818322960)
+
+Currently, we can say (in wren-cli):
+```
+> var x
+> if(x="yes") System.print(x)
+yes
+> x
+yes
+```
+
+I would like to be able to collapse the first two lines together and say:
+```
+> if(var x="yes") System.print(x)
+yes
+> x
+[repl line 1] Error at 'x': Variable is used but not defined
+```
+And the same for `while(var x = expr)`.
+
+## Proposed semantics
+
+### `if`
+
+- The variable is in scope only during the body of the `if`.
+  - I would also prefer it to be in scope until the end of the else if/else chain, but it would still be useful to me without that.
+
+### `while`
+
+## Pros and cons
+
+Pros:
+- Keeps the scope clean.  For me, this is the big one.
+- Makes it easier to refer to temporary results
