@@ -679,7 +679,8 @@ static void createForeign(WrenVM* vm, ObjFiber* fiber, Value* stack)
   ASSERT(vm->apiStack == NULL, "Cannot already be in foreign call.");
   vm->apiStack = stack;
 
-  method->as.foreign(vm, method->userData);
+  //method->as.foreign(vm, method->userData);
+  method->as.foreign(vm, NULL);
 
   vm->apiStack = NULL;
 }
