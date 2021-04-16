@@ -290,16 +290,17 @@ def read_baseline():
               benchmark[2] = 0.0
 
 
-def generate_baseline():
-  print("generating baseline")
+def generate_baseline(baseline_filename):
+  if baseline_filename is None:
+      baseline_filename = os.path.join(BENCHMARK_DIR, "baseline.txt")
+  print("generating baseline", baseline_filename)
   baseline_text = ""
   for benchmark in BENCHMARKS:
     best = run_benchmark_language(benchmark, LANGUAGES[0], {})
     baseline_text += ("{},{}\n".format(benchmark[0], best))
 
   # Write them to a file.
-  baseline_file = os.path.join(BENCHMARK_DIR, "baseline.txt")
-  with open(baseline_file, 'w') as out:
+  with open(baseline_filename, 'w') as out:
     out.write(baseline_text)
 
 
@@ -346,6 +347,8 @@ def main():
   parser.add_argument("--generate-baseline",
       action="store_true",
       help="Generate a baseline file")
+  parser.add_argument("--baseline-filename",
+      help="Name of the baseline file.  Implies --generate-baseline.")
   parser.add_argument("--graph",
       action="store_true",
       help="Display graph results.")
@@ -357,9 +360,11 @@ def main():
       help="Output the results chart as HTML")
 
   args = parser.parse_args()
+  if args.baseline_filename is not None:
+      args.generate_baseline = True
 
   if args.generate_baseline:
-    generate_baseline()
+    generate_baseline(args.baseline_filename)
     return
 
   read_baseline()
