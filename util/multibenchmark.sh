@@ -45,7 +45,7 @@ main() {
   for i in `seq 0 $((nruns - 1))` ; do  # can't do this in the loop above
     fns+=("$stem-$i.txt")               # because the loop body is a subshell
   done
-  perl -M5.024 -Mvars='$results' -Mstrict -Mwarnings -F, -E 'chomp @F; push $results->{$F[0]}->@*, $F[1]; END { say join(q(,), qq("\Q$_\E"), $results->{$_}->@*) foreach sort keys %$results}' "${fns[@]}" > "$stem-summary.txt"
+  perl -M5.024 -Mvars='$results' -Mstrict -Mwarnings -F, -E 'chomp @F; push $results->{$F[0]}->@*, $F[1]; END { say join(q(,), qq("\Q$_\E"), $results->{$_}->@*) foreach sort keys %$results}' "${fns[@]}" > "$stem-summary.csv"
 
   set +x
 } #main()
