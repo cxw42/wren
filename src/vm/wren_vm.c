@@ -352,6 +352,8 @@ static void bindMethod(WrenVM* vm, int methodType, int symbol,
   if (methodType == CODE_METHOD_STATIC) classObj = classObj->obj.classObj;
 
   Method method;
+  WrenUserData userData = WREN_USER_DATA_NONE;
+
   if (IS_STRING(methodValue))
   {
     const char* name = AS_CSTRING(methodValue);
@@ -372,7 +374,7 @@ static void bindMethod(WrenVM* vm, int methodType, int symbol,
     }
 
     method.as.foreign = foreignMethod.executeFn;
-    method.userData = foreignMethod.userData;
+    userData = foreignMethod.userData;
   }
   else
   {
@@ -383,12 +385,12 @@ static void bindMethod(WrenVM* vm, int methodType, int symbol,
     wrenBindMethodCode(classObj, method.as.closure->fn);
   }
 
-  wrenBindMethod(vm, classObj, symbol, method);
+  wrenBindMethod(vm, classObj, symbol, method, userData);
 }
 
 static void callForeign(WrenVM* vm, ObjFiber* fiber,
-                        WrenForeignMethodFn foreign, void *userData,
-                        int numArgs)
+                        WrenForeignMethodFn foreign, 
+                        int numArgs, void *userData)
 {
   ASSERT(vm->apiStack == NULL, "Cannot already be in foreign call.");
   vm->apiStack = fiber->stackTop - numArgs;
@@ -593,7 +595,7 @@ static void bindForeignClass(WrenVM* vm, ObjClass* classObj, ObjModule* module)
   
   Method method;
   method.type = METHOD_FOREIGN;
-  method.userData = NULL;
+  WrenUserData userData = WREN_USER_DATA_NONE;
 
   // Add the symbol even if there is no allocator so we can ensure that the
   // symbol itself is always in the symbol table.
@@ -601,7 +603,7 @@ static void bindForeignClass(WrenVM* vm, ObjClass* classObj, ObjModule* module)
   if (methods.allocate != NULL)
   {
     method.as.foreign = methods.allocate;
-    wrenBindMethod(vm, classObj, symbol, method);
+    wrenBindMethod(vm, classObj, symbol, method, userData);
   }
   
   // Add the symbol even if there is no finalizer so we can ensure that the
@@ -610,7 +612,7 @@ static void bindForeignClass(WrenVM* vm, ObjClass* classObj, ObjModule* module)
   if (methods.finalize != NULL)
   {
     method.as.foreign = (WrenForeignMethodFn)methods.finalize;
-    wrenBindMethod(vm, classObj, symbol, method);
+    wrenBindMethod(vm, classObj, symbol, method, userData);
   }
 }
 
@@ -673,13 +675,14 @@ static void createForeign(WrenVM* vm, ObjFiber* fiber, Value* stack)
 
   ASSERT(classObj->methods.count > symbol, "Class should have allocator.");
   Method* method = &classObj->methods.data[symbol];
+  WrenUserData userData = WREN_USER_DATA_NONE;
   ASSERT(method->type == METHOD_FOREIGN, "Allocator should be foreign.");
 
   // Pass the constructor arguments to the allocator as well.
   ASSERT(vm->apiStack == NULL, "Cannot already be in foreign call.");
   vm->apiStack = stack;
 
-  method->as.foreign(vm, method->userData);
+  method->as.foreign(vm, userData);
 
   vm->apiStack = NULL;
 }
@@ -1081,7 +1084,8 @@ static WrenInterpretResult runInterpreter(WrenVM* vm, register ObjFiber* fiber)
           break;
 
         case METHOD_FOREIGN:
-          callForeign(vm, fiber, method->as.foreign, method->userData, numArgs);
+          callForeign(vm, fiber, method->as.foreign, numArgs,
+              classObj->foreignMethodUserDatas.data[symbol].userData);
           if (wrenHasError(fiber)) RUNTIME_ERROR();
           break;
 
