@@ -111,16 +111,17 @@ typedef enum
   TOKEN_TRUE,
   TOKEN_VAR,
   TOKEN_WHILE,
+  TOKEN_SWITCH,
 
   TOKEN_FIELD,
   TOKEN_STATIC_FIELD,
   TOKEN_NAME,
   TOKEN_NUMBER,
-  
+
   // A string literal without any interpolation, or the last section of a
   // string following the last interpolated expression.
   TOKEN_STRING,
-  
+
   // A portion of a string literal preceding an interpolated expression. This
   // string:
   //
@@ -153,7 +154,7 @@ typedef struct
 
   // The 1-based line where the token appears.
   int line;
-  
+
   // The parsed value if the token is a literal.
   Value value;
 } Token;
@@ -185,7 +186,7 @@ typedef struct
 
   // The most recently consumed/advanced token.
   Token previous;
-  
+
   // Tracks the lexing state when tokenizing interpolated strings.
   //
   // Interpolated strings make the lexer not strictly regular: we don't know
@@ -264,19 +265,19 @@ typedef enum
   // A name followed by a (possibly empty) parenthesized parameter list. Also
   // used for binary operators.
   SIG_METHOD,
-  
+
   // Just a name. Also used for unary operators.
   SIG_GETTER,
-  
+
   // A name followed by "=".
   SIG_SETTER,
-  
+
   // A square bracketed parameter list.
   SIG_SUBSCRIPT,
-  
+
   // A square bracketed parameter list followed by "=".
   SIG_SUBSCRIPT_SETTER,
-  
+
   // A constructor initializer function. This has a distinct signature to
   // prevent it from being invoked directly outside of the constructor on the
   // metaclass.
@@ -296,7 +297,7 @@ typedef struct
 {
   // The name of the class.
   ObjString* name;
-  
+
   // Attributes for the class itself
   ObjMap* classAttributes;
   // Attributes for methods in this class
@@ -312,7 +313,7 @@ typedef struct
 
   // True if the class being compiled is a foreign class.
   bool isForeign;
-  
+
   // True if the current method being compiled is static.
   bool inStatic;
 
@@ -342,7 +343,7 @@ struct sCompiler
   // here means top-level code is being compiled and there is no block scope
   // in effect at all. Any variables declared will be module-level.
   int scopeDepth;
-  
+
   // The current number of slots (locals and temporaries) in use.
   //
   // We use this and maxSlots to track the maximum number of additional slots
@@ -363,7 +364,7 @@ struct sCompiler
 
   // The function being compiled.
   ObjFn* fn;
-  
+
   // The constants for the function being compiled.
   ObjMap* constants;
 
@@ -385,10 +386,10 @@ typedef enum
 {
   // A local variable in the current function.
   SCOPE_LOCAL,
-  
+
   // A local variable declared in an enclosing function.
   SCOPE_UPVALUE,
-  
+
   // A top-level module variable.
   SCOPE_MODULE
 } Scope;
@@ -399,7 +400,7 @@ typedef struct
 {
   // The stack slot, upvalue slot, or module symbol defining the variable.
   int index;
-  
+
   // Where the variable is declared.
   Scope scope;
 } Variable;
@@ -409,7 +410,7 @@ static void disallowAttributes(Compiler* compiler);
 static void addToAttributeGroup(Compiler* compiler, Value group, Value key, Value value);
 static void emitClassAttributes(Compiler* compiler, ClassInfo* classInfo);
 static void copyAttributes(Compiler* compiler, ObjMap* into);
-static void copyMethodAttributes(Compiler* compiler, bool isForeign, 
+static void copyMethodAttributes(Compiler* compiler, bool isForeign,
             bool isStatic, const char* fullSignature, int32_t length);
 
 // The stack effect of each opcode. The index in the array is the opcode, and
@@ -466,7 +467,7 @@ static void error(Compiler* compiler, const char* format, ...)
   // If the parse error was caused by an error token, the lexer has already
   // reported it.
   if (token->type == TOKEN_ERROR) return;
-  
+
   va_list args;
   va_start(args, format);
   if (token->type == TOKEN_LINE)
@@ -499,14 +500,14 @@ static void error(Compiler* compiler, const char* format, ...)
 static int addConstant(Compiler* compiler, Value constant)
 {
   if (compiler->parser->hasError) return -1;
-  
+
   // See if we already have a constant for the value. If so, reuse it.
   if (compiler->constants != NULL)
   {
     Value existing = wrenMapGet(compiler->constants, constant);
     if (IS_NUM(existing)) return (int)AS_NUM(existing);
   }
-  
+
   // It's a new constant.
   if (compiler->fn->constants.count < MAX_CONSTANTS)
   {
@@ -514,7 +515,7 @@ static int addConstant(Compiler* compiler, Value constant)
     wrenValueBufferWrite(compiler->parser->vm, &compiler->fn->constants,
                          constant);
     if (IS_OBJ(constant)) wrenPopRoot(compiler->parser->vm);
-    
+
     if (compiler->constants == NULL)
     {
       compiler->constants = wrenNewMap(compiler->parser->vm);
@@ -540,7 +541,7 @@ static void initCompiler(Compiler* compiler, Parser* parser, Compiler* parent,
   compiler->loop = NULL;
   compiler->enclosingClass = NULL;
   compiler->isInitializer = false;
-  
+
   // Initialize these to NULL before allocating in case a GC gets triggered in
   // the middle of initializing the compiler.
   compiler->fn = NULL;
@@ -569,7 +570,7 @@ static void initCompiler(Compiler* compiler, Parser* parser, Compiler* parent,
     compiler->locals[0].name = NULL;
     compiler->locals[0].length = 0;
   }
-  
+
   compiler->locals[0].depth = -1;
   compiler->locals[0].isUpvalue = false;
 
@@ -583,7 +584,7 @@ static void initCompiler(Compiler* compiler, Parser* parser, Compiler* parent,
     // The initial scope for functions and methods is local scope.
     compiler->scopeDepth = 0;
   }
-  
+
   compiler->numAttributes = 0;
   compiler->attributes = wrenNewMap(parser->vm);
   compiler->fn = wrenNewFunction(parser->vm, parser->module,
@@ -623,6 +624,7 @@ static Keyword keywords[] =
   {"true",      4, TOKEN_TRUE},
   {"var",       3, TOKEN_VAR},
   {"while",     5, TOKEN_WHILE},
+  {"switch",    6, TOKEN_SWITCH},
   {NULL,        0, TOKEN_EOF} // Sentinel to mark the end of the array.
 };
 
@@ -677,7 +679,7 @@ static void makeToken(Parser* parser, TokenType type)
   parser->next.start = parser->tokenStart;
   parser->next.length = (int)(parser->currentChar - parser->tokenStart);
   parser->next.line = parser->currentLine;
-  
+
   // Make line tokens appear on the line containing the "\n".
   if (type == TOKEN_LINE) parser->next.line--;
 }
@@ -759,13 +761,13 @@ static void makeNumber(Parser* parser, bool isHex)
   {
     parser->next.value = NUM_VAL(strtod(parser->tokenStart, NULL));
   }
-  
+
   if (errno == ERANGE)
   {
     lexError(parser, "Number literal was too large (%d).", sizeof(long int));
     parser->next.value = NUM_VAL(0);
   }
-  
+
   // We don't check that the entire token is consumed after calling strtoll()
   // or strtod() because we've already scanned it ourselves and know it's valid.
 
@@ -841,7 +843,7 @@ static void readName(Parser* parser, TokenType type, char firstChar)
       break;
     }
   }
-  
+
   parser->next.value = wrenNewStringLength(parser->vm,
                                             (char*)string.data, string.count);
 
@@ -921,17 +923,17 @@ static void readRawString(Parser* parser)
     }
 
     if(c == '"' && c1 == '"' && c2 == '"') break;
-    
+
     bool isWhitespace = c == ' ' || c == '\t';
     skipEnd = c == '\n' || isWhitespace ? skipEnd : -1;
 
-    // If we haven't seen a newline or other character yet, 
-    // and still seeing whitespace, count the characters 
+    // If we haven't seen a newline or other character yet,
+    // and still seeing whitespace, count the characters
     // as skippable till we know otherwise
     bool skippable = skipStart != -1 && isWhitespace && firstNewline == -1;
     skipStart = skippable ? string.count + 1 : skipStart;
-    
-    // We've counted leading whitespace till we hit something else, 
+
+    // We've counted leading whitespace till we hit something else,
     // but it's not a newline, so we reset skipStart since we need these characters
     if (firstNewline == -1 && !isWhitespace && c != '\n') skipStart = -1;
 
@@ -944,7 +946,7 @@ static void readRawString(Parser* parser)
       parser->currentChar--;
       break;
     }
- 
+
     wrenByteBufferWrite(parser->vm, &string, c);
   }
 
@@ -960,9 +962,9 @@ static void readRawString(Parser* parser)
 
   count -= (offset > count) ? count : offset;
 
-  parser->next.value = wrenNewStringLength(parser->vm, 
+  parser->next.value = wrenNewStringLength(parser->vm,
                          ((char*)string.data) + offset, count);
-  
+
   wrenByteBufferClear(parser->vm, &string);
   makeToken(parser, type);
 }
@@ -973,7 +975,7 @@ static void readString(Parser* parser)
   ByteBuffer string;
   TokenType type = TOKEN_STRING;
   wrenByteBufferInit(&string);
-  
+
   for (;;)
   {
     char c = nextChar(parser);
@@ -995,7 +997,7 @@ static void readString(Parser* parser)
       {
         // TODO: Allow format string.
         if (nextChar(parser) != '(') lexError(parser, "Expect '(' after '%%'.");
-        
+
         parser->parens[parser->numParens++] = 1;
         type = TOKEN_INTERPOLATION;
         break;
@@ -1004,7 +1006,7 @@ static void readString(Parser* parser)
       lexError(parser, "Interpolation may only nest %d levels deep.",
                MAX_INTERPOLATION_NESTING);
     }
-    
+
     if (c == '\\')
     {
       switch (nextChar(parser))
@@ -1042,7 +1044,7 @@ static void readString(Parser* parser)
 
   parser->next.value = wrenNewStringLength(parser->vm,
                                               (char*)string.data, string.count);
-  
+
   wrenByteBufferClear(parser->vm, &string);
   makeToken(parser, type);
 }
@@ -1058,7 +1060,7 @@ static void nextToken(Parser* parser)
   // will still work.
   if (parser->next.type == TOKEN_EOF) return;
   if (parser->current.type == TOKEN_EOF) return;
-  
+
   while (peekChar(parser) != '\0')
   {
     parser->tokenStart = parser->currentChar;
@@ -1071,7 +1073,7 @@ static void nextToken(Parser* parser)
         if (parser->numParens > 0) parser->parens[parser->numParens - 1]++;
         makeToken(parser, TOKEN_LEFT_PAREN);
         return;
-        
+
       case ')':
         // If we are inside an interpolated expression, count the ")".
         if (parser->numParens > 0 &&
@@ -1083,10 +1085,10 @@ static void nextToken(Parser* parser)
           readString(parser);
           return;
         }
-        
+
         makeToken(parser, TOKEN_RIGHT_PAREN);
         return;
-        
+
       case '[': makeToken(parser, TOKEN_LEFT_BRACKET); return;
       case ']': makeToken(parser, TOKEN_RIGHT_BRACKET); return;
       case '{': makeToken(parser, TOKEN_LEFT_BRACE); return;
@@ -1103,7 +1105,7 @@ static void nextToken(Parser* parser)
           break;
         }
         // Otherwise we treat it as a token
-        makeToken(parser, TOKEN_HASH); 
+        makeToken(parser, TOKEN_HASH);
         return;
       }
       case '^': makeToken(parser, TOKEN_CARET); return;
@@ -1111,7 +1113,7 @@ static void nextToken(Parser* parser)
       case '-': makeToken(parser, TOKEN_MINUS); return;
       case '~': twoCharToken(parser, '~', TOKEN_TILDETILDE, TOKEN_TILDE); return;
       case '?': makeToken(parser, TOKEN_QUESTION); return;
-        
+
       case '|': twoCharToken(parser, '|', TOKEN_PIPEPIPE, TOKEN_PIPE); return;
       case '&': twoCharToken(parser, '&', TOKEN_AMPAMP, TOKEN_AMP); return;
       case '=': twoCharToken(parser, '=', TOKEN_EQEQ, TOKEN_EQ); return;
@@ -1130,17 +1132,17 @@ static void nextToken(Parser* parser)
           makeToken(parser, TOKEN_BANG);
         }
         return;
-        
+
       case '.':
         if (matchChar(parser, '.'))
         {
           twoCharToken(parser, '.', TOKEN_DOTDOTDOT, TOKEN_DOTDOT);
           return;
         }
-        
+
         makeToken(parser, TOKEN_DOT);
         return;
-        
+
       case '/':
         if (matchChar(parser, '/'))
         {
@@ -1326,11 +1328,11 @@ static void allowLineBeforeDot(Compiler* compiler) {
 static int emitByte(Compiler* compiler, int byte)
 {
   wrenByteBufferWrite(compiler->parser->vm, &compiler->fn->code, (uint8_t)byte);
-  
+
   // Assume the instruction is associated with the most recently consumed token.
   wrenIntBufferWrite(compiler->parser->vm, &compiler->fn->debug->sourceLines,
                      compiler->parser->previous.line);
-  
+
   return compiler->fn->code.count - 1;
 }
 
@@ -1338,7 +1340,7 @@ static int emitByte(Compiler* compiler, int byte)
 static void emitOp(Compiler* compiler, Code instruction)
 {
   emitByte(compiler, instruction);
-  
+
   // Keep track of the stack's high water mark.
   compiler->numSlots += stackEffects[instruction];
   if (compiler->numSlots > compiler->fn->maxSlots)
@@ -1385,7 +1387,7 @@ static int emitJump(Compiler* compiler, Code instruction)
 static void emitConstant(Compiler* compiler, Value value)
 {
   int constant = addConstant(compiler, value);
-  
+
   // Compile the code to load the constant.
   emitShortArg(compiler, CODE_CONSTANT, constant);
 }
@@ -1522,7 +1524,7 @@ static int discardLocals(Compiler* compiler, int depth)
     {
       emitByte(compiler, CODE_POP);
     }
-    
+
 
     local--;
   }
@@ -1592,11 +1594,11 @@ static int findUpvalue(Compiler* compiler, const char* name, int length)
 {
   // If we are at the top level, we didn't find it.
   if (compiler->parent == NULL) return -1;
-  
+
   // If we hit the method boundary (and the name isn't a static field), then
   // stop looking for it. We'll instead treat it as a self send.
   if (name[0] != '_' && compiler->parent->enclosingClass != NULL) return -1;
-  
+
   // See if it's a local variable in the immediately enclosing function.
   int local = resolveLocal(compiler->parent, name, length);
   if (local != -1)
@@ -1688,7 +1690,7 @@ static ObjFn* endCompiler(Compiler* compiler,
 
   wrenFunctionBindName(compiler->parser->vm, compiler->fn,
                        debugName, debugNameLength);
-  
+
   // In the function that contains this one, load the resulting function object.
   if (compiler->parent != NULL)
   {
@@ -1712,7 +1714,7 @@ static ObjFn* endCompiler(Compiler* compiler,
 
   // Pop this compiler off the stack.
   compiler->parser->vm->compiler = compiler->parent;
-  
+
   #if WREN_DEBUG_DUMP_COMPILED_CODE
     wrenDumpCode(compiler->parser->vm, compiler->fn);
   #endif
@@ -1805,7 +1807,7 @@ static bool finishBlock(Compiler* compiler)
     consumeLine(compiler, "Expect newline after statement.");
   }
   while (peek(compiler) != TOKEN_RIGHT_BRACE && peek(compiler) != TOKEN_EOF);
-  
+
   consume(compiler, TOKEN_RIGHT_BRACE, "Expect '}' at end of block.");
   return false;
 }
@@ -1923,7 +1925,7 @@ static void signatureToString(Signature* signature,
       name[(*length)++] = '=';
       signatureParameterList(name, length, 1, '(', ')');
       break;
-      
+
     case SIG_INITIALIZER:
       memcpy(name, "init ", 5);
       memcpy(name + 5, signature->name, signature->length);
@@ -1950,7 +1952,7 @@ static int signatureSymbol(Compiler* compiler, Signature* signature)
 static Signature signatureFromToken(Compiler* compiler, SignatureType type)
 {
   Signature signature;
-  
+
   // Get the token for the method name.
   Token* token = &compiler->parser->previous;
   signature.name = token->start;
@@ -1964,7 +1966,7 @@ static Signature signatureFromToken(Compiler* compiler, SignatureType type)
           MAX_METHOD_NAME);
     signature.length = MAX_METHOD_NAME;
   }
-  
+
   return signature;
 }
 
@@ -2081,10 +2083,10 @@ static void methodCall(Compiler* compiler, Code instruction,
     {
       error(compiler, "A superclass constructor must have an argument list.");
     }
-    
+
     called.type = SIG_INITIALIZER;
   }
-  
+
   callSignature(compiler, instruction, &called);
 }
 
@@ -2162,7 +2164,7 @@ static void list(Compiler* compiler, bool canAssign)
   // Instantiate a new list.
   loadCoreVariable(compiler, "List");
   callMethod(compiler, 0, "new()", 5);
-  
+
   // Compile the list elements. Each one compiles to a ".add()" call.
   do
   {
@@ -2422,7 +2424,7 @@ static void name(Compiler* compiler, bool canAssign)
       error(compiler, "Too many module variables defined.");
     }
   }
-  
+
   bareName(compiler, canAssign, variable);
 }
 
@@ -2452,26 +2454,26 @@ static void stringInterpolation(Compiler* compiler, bool canAssign)
   // Instantiate a new list.
   loadCoreVariable(compiler, "List");
   callMethod(compiler, 0, "new()", 5);
-  
+
   do
   {
     // The opening string part.
     literal(compiler, false);
     callMethod(compiler, 1, "addCore_(_)", 11);
-    
+
     // The interpolated expression.
     ignoreNewlines(compiler);
     expression(compiler);
     callMethod(compiler, 1, "addCore_(_)", 11);
-    
+
     ignoreNewlines(compiler);
   } while (match(compiler, TOKEN_INTERPOLATION));
-  
+
   // The trailing string part.
   consume(compiler, TOKEN_STRING, "Expect end of string interpolation.");
   literal(compiler, false);
   callMethod(compiler, 1, "addCore_(_)", 11);
-  
+
   // The list of interpolated parts.
   callMethod(compiler, 0, "join()", 6);
 }
@@ -2704,9 +2706,9 @@ static void parameterList(Compiler* compiler, Signature* signature)
 {
   // The parameter list is optional.
   if (!match(compiler, TOKEN_LEFT_PAREN)) return;
-  
+
   signature->type = SIG_METHOD;
-  
+
   // Allow new line before an empty argument list
   ignoreNewlines(compiler);
 
@@ -2721,7 +2723,7 @@ static void parameterList(Compiler* compiler, Signature* signature)
 void namedSignature(Compiler* compiler, Signature* signature)
 {
   signature->type = SIG_GETTER;
-  
+
   // If it's a setter, it can't also have a parameter list.
   if (maybeSetter(compiler, signature)) return;
 
@@ -2733,10 +2735,10 @@ void namedSignature(Compiler* compiler, Signature* signature)
 void constructorSignature(Compiler* compiler, Signature* signature)
 {
   consume(compiler, TOKEN_NAME, "Expect constructor name after 'construct'.");
-  
+
   // Capture the name.
   *signature = signatureFromToken(compiler, SIG_INITIALIZER);
-  
+
   if (match(compiler, TOKEN_EQ))
   {
     error(compiler, "A constructor cannot be a setter.");
@@ -2747,10 +2749,10 @@ void constructorSignature(Compiler* compiler, Signature* signature)
     error(compiler, "A constructor cannot be a getter.");
     return;
   }
-  
+
   // Allow an empty parameter list.
   if (match(compiler, TOKEN_RIGHT_PAREN)) return;
-  
+
   finishParameterList(compiler, signature);
   consume(compiler, TOKEN_RIGHT_PAREN, "Expect ')' after parameters.");
 }
@@ -2826,6 +2828,7 @@ GrammarRule rules[] =
   /* TOKEN_TRUE          */ PREFIX(boolean),
   /* TOKEN_VAR           */ UNUSED,
   /* TOKEN_WHILE         */ UNUSED,
+  /* TOKEN_SWITCH        */ UNUSED,
   /* TOKEN_FIELD         */ PREFIX(field),
   /* TOKEN_STATIC_FIELD  */ PREFIX(staticField),
   /* TOKEN_NAME          */ { name, NULL, namedSignature, PREC_NONE, NULL },
@@ -2880,7 +2883,7 @@ void expression(Compiler* compiler)
   parsePrecedence(compiler, PREC_LOWEST);
 }
 
-// Returns the number of bytes for the arguments to the instruction 
+// Returns the number of bytes for the arguments to the instruction
 // at [ip] in [fn]'s bytecode.
 static int getByteCountForArguments(const uint8_t* bytecode,
                             const Value* constants, int ip)
@@ -3151,22 +3154,22 @@ static void ifStatement(Compiler* compiler)
   consume(compiler, TOKEN_LEFT_PAREN, "Expect '(' after 'if'.");
   expression(compiler);
   consume(compiler, TOKEN_RIGHT_PAREN, "Expect ')' after if condition.");
-  
+
   // Jump to the else branch if the condition is false.
   int ifJump = emitJump(compiler, CODE_JUMP_IF);
-  
+
   // Compile the then branch.
   statement(compiler);
-  
+
   // Compile the else branch if there is one.
   if (match(compiler, TOKEN_ELSE))
   {
     // Jump over the else branch when the if branch is taken.
     int elseJump = emitJump(compiler, CODE_JUMP);
     patchJump(compiler, ifJump);
-    
+
     statement(compiler);
-    
+
     // Patch the jump over the else.
     patchJump(compiler, elseJump);
   }
@@ -3191,6 +3194,71 @@ static void whileStatement(Compiler* compiler)
   endLoop(compiler);
 }
 
+// XXX debugging macro --- misuse the error-reporting mechanism to print status
+#define REPORT(compiler, ...) \
+  do { \
+    error((compiler), __VA_ARGS__); \
+    compiler->parser->hasError = false; \
+  } while(0)
+
+// Switch: a series of (topic ~~ test) conditions
+static void switchStatement(Compiler* compiler)
+{
+  Signature smartmatch = { "~~", 2, SIG_METHOD, 1 };
+
+  // TODO not yet supported: break, fallthrough
+  REPORT(compiler, "==> Starting switch statement");
+
+  // Compile the topic expresssion
+  consume(compiler, TOKEN_LEFT_PAREN, "Expect '(' after 'switch'.");
+  expression(compiler);           // topic ] (stack top)
+  consume(compiler, TOKEN_RIGHT_PAREN, "Expect ')' after switch topic.");
+  consume(compiler, TOKEN_LEFT_BRACE, "Expect '{' after switch topic.");
+  consumeLine(compiler, "Expect newline after '{' starting switch statement.");
+
+  while (1)
+  {
+    REPORT(compiler, "==> In loop");
+    if (match(compiler, TOKEN_ELSE))
+    {
+      REPORT(compiler, "==> else");
+      statement(compiler);
+      consumeLine(compiler, "Expect newline after switch case.");
+      break;
+    }
+
+    if (peek(compiler) == TOKEN_RIGHT_BRACE)
+    {
+      REPORT(compiler, "==> rbrace");
+      break;
+    }
+
+    REPORT(compiler, "==> test");
+    // Normal case: emit topic ~~ test
+    emitOp(compiler, CODE_DUP);   // topic topic ]
+    expression(compiler);         // topic topic expression ]
+    emitOp(compiler, CODE_SWAP);  // topic expression topic ]
+    callSignature(compiler, CODE_CALL_0, &smartmatch);
+                                  // topic didMatch ]
+
+    consume(compiler, TOKEN_COLON, "Expect ':' after switch expression.");
+
+    // Jump to the next case if the condition is false.
+    int nextCaseJump = emitJump(compiler, CODE_JUMP_IF);
+                                  // topic ]
+    REPORT(compiler, "==>   statement");
+    statement(compiler);
+    // TODO emit jump here to end of switch
+    patchJump(compiler, nextCaseJump);
+
+    consumeLine(compiler, "Expect newline after switch case.");
+
+  }
+
+  emitOp(compiler, CODE_POP);     // ]
+  consume(compiler, TOKEN_RIGHT_BRACE, "Expect '}' after switch body.");
+  consumeLine(compiler, "Expect newline after switch body.");
+}
 // Compiles a simple statement. These can only appear at the top-level or
 // within curly blocks. Simple statements exclude variable binding statements
 // like "var" and "class" which are not allowed directly in places like the
@@ -3247,7 +3315,7 @@ void statement(Compiler* compiler)
     // Compile the return value.
     if (peek(compiler) == TOKEN_LINE)
     {
-      // If there's no expression after return, initializers should 
+      // If there's no expression after return, initializers should
       // return 'this' and regular methods should return null
       Code result = compiler->isInitializer ? CODE_LOAD_LOCAL_0 : CODE_NULL;
       emitOp(compiler, result);
@@ -3267,6 +3335,10 @@ void statement(Compiler* compiler)
   else if (match(compiler, TOKEN_WHILE))
   {
     whileStatement(compiler);
+  }
+  else if (match(compiler, TOKEN_SWITCH))
+  {
+    switchStatement(compiler);
   }
   else if (match(compiler, TOKEN_LEFT_BRACE))
   {
@@ -3306,18 +3378,18 @@ static void createConstructor(Compiler* compiler, Signature* signature,
 {
   Compiler methodCompiler;
   initCompiler(&methodCompiler, compiler->parser, compiler, true);
-  
+
   // Allocate the instance.
   emitOp(&methodCompiler, compiler->enclosingClass->isForeign
        ? CODE_FOREIGN_CONSTRUCT : CODE_CONSTRUCT);
-  
+
   // Run its initializer.
   emitShortArg(&methodCompiler, (Code)(CODE_CALL_0 + signature->arity),
                initializerSymbol);
-  
+
   // Return the instance.
   emitOp(&methodCompiler, CODE_RETURN);
-  
+
   endCompiler(&methodCompiler, "", 0);
 }
 
@@ -3346,7 +3418,7 @@ static int declareMethod(Compiler* compiler, Signature* signature,
                          const char* name, int length)
 {
   int symbol = signatureSymbol(compiler, signature);
-  
+
   // See if the class has already declared method with this signature.
   ClassInfo* classInfo = compiler->enclosingClass;
   IntBuffer* methods = classInfo->inStatic
@@ -3361,12 +3433,12 @@ static int declareMethod(Compiler* compiler, Signature* signature,
       break;
     }
   }
-  
+
   wrenIntBufferWrite(compiler->parser->vm, methods, symbol);
   return symbol;
 }
 
-static Value consumeLiteral(Compiler* compiler, const char* message) 
+static Value consumeLiteral(Compiler* compiler, const char* message)
 {
   if(match(compiler, TOKEN_FALSE))  return FALSE_VAL;
   if(match(compiler, TOKEN_TRUE))   return TRUE_VAL;
@@ -3381,11 +3453,11 @@ static Value consumeLiteral(Compiler* compiler, const char* message)
 
 static bool matchAttribute(Compiler* compiler) {
 
-  if(match(compiler, TOKEN_HASH)) 
+  if(match(compiler, TOKEN_HASH))
   {
     compiler->numAttributes++;
     bool runtimeAccess = match(compiler, TOKEN_BANG);
-    if(match(compiler, TOKEN_NAME)) 
+    if(match(compiler, TOKEN_NAME))
     {
       Value group = compiler->parser->previous.value;
       TokenType ahead = peek(compiler);
@@ -3393,7 +3465,7 @@ static bool matchAttribute(Compiler* compiler) {
       {
         Value key = group;
         Value value = NULL_VAL;
-        if(match(compiler, TOKEN_EQ)) 
+        if(match(compiler, TOKEN_EQ))
         {
           value = consumeLiteral(compiler, "Expect a Bool, Num, String or Identifier literal for an attribute value.");
         }
@@ -3405,8 +3477,8 @@ static bool matchAttribute(Compiler* compiler) {
         if(match(compiler, TOKEN_RIGHT_PAREN))
         {
           error(compiler, "Expected attributes in group, group cannot be empty.");
-        } 
-        else 
+        }
+        else
         {
           while(peek(compiler) != TOKEN_RIGHT_PAREN)
           {
@@ -3424,7 +3496,7 @@ static bool matchAttribute(Compiler* compiler) {
           }
 
           ignoreNewlines(compiler);
-          consume(compiler, TOKEN_RIGHT_PAREN, 
+          consume(compiler, TOKEN_RIGHT_PAREN,
             "Expected ')' after grouped attributes.");
         }
       }
@@ -3433,7 +3505,7 @@ static bool matchAttribute(Compiler* compiler) {
         error(compiler, "Expect an equal, newline or grouping after an attribute key.");
       }
     }
-    else 
+    else
     {
       error(compiler, "Expect an attribute definition after #.");
     }
@@ -3460,16 +3532,16 @@ static bool method(Compiler* compiler, Variable classVariable)
   bool isForeign = match(compiler, TOKEN_FOREIGN);
   bool isStatic = match(compiler, TOKEN_STATIC);
   compiler->enclosingClass->inStatic = isStatic;
-    
+
   SignatureFn signatureFn = rules[compiler->parser->current.type].method;
   nextToken(compiler->parser);
-  
+
   if (signatureFn == NULL)
   {
     error(compiler, "Expect method definition.");
     return false;
   }
-  
+
   // Build the method signature.
   Signature signature = signatureFromToken(compiler, SIG_GETTER);
   compiler->enclosingClass->signature = &signature;
@@ -3481,25 +3553,25 @@ static bool method(Compiler* compiler, Variable classVariable)
   signatureFn(&methodCompiler, &signature);
 
   methodCompiler.isInitializer = signature.type == SIG_INITIALIZER;
-  
+
   if (isStatic && signature.type == SIG_INITIALIZER)
   {
     error(compiler, "A constructor cannot be static.");
   }
-  
+
   // Include the full signature in debug messages in stack traces.
   char fullSignature[MAX_METHOD_SIGNATURE];
   int length;
   signatureToString(&signature, fullSignature, &length);
 
-  // Copy any attributes the compiler collected into the enclosing class 
+  // Copy any attributes the compiler collected into the enclosing class
   copyMethodAttributes(compiler, isForeign, isStatic, fullSignature, length);
 
   // Check for duplicate methods. Doesn't matter that it's already been
   // defined, error will discard bytecode anyway.
   // Check if the method table already contains this symbol
   int methodSymbol = declareMethod(compiler, &signature, fullSignature, length);
-  
+
   if (isForeign)
   {
     // Define a constant for the signature.
@@ -3516,7 +3588,7 @@ static bool method(Compiler* compiler, Variable classVariable)
     finishBody(&methodCompiler);
     endCompiler(&methodCompiler, fullSignature, length);
   }
-  
+
   // Define the method. For a constructor, this defines the instance
   // initializer method.
   defineMethod(compiler, classVariable, isStatic, methodSymbol);
@@ -3526,7 +3598,7 @@ static bool method(Compiler* compiler, Variable classVariable)
     // Also define a matching constructor method on the metaclass.
     signature.type = SIG_METHOD;
     int constructorSymbol = signatureSymbol(compiler, &signature);
-    
+
     createConstructor(compiler, &signature, methodSymbol);
     defineMethod(compiler, classVariable, true, constructorSymbol);
   }
@@ -3542,14 +3614,14 @@ static void classDefinition(Compiler* compiler, bool isForeign)
   Variable classVariable;
   classVariable.scope = compiler->scopeDepth == -1 ? SCOPE_MODULE : SCOPE_LOCAL;
   classVariable.index = declareNamedVariable(compiler);
-  
+
   // Create shared class name value
   Value classNameString = wrenNewStringLength(compiler->parser->vm,
       compiler->parser->previous.start, compiler->parser->previous.length);
-  
+
   // Create class name string to track method duplicates
   ObjString* className = AS_STRING(classNameString);
-  
+
   // Make a string constant for the name.
   emitConstant(compiler, classNameString);
 
@@ -3588,10 +3660,10 @@ static void classDefinition(Compiler* compiler, bool isForeign)
   classInfo.isForeign = isForeign;
   classInfo.name = className;
 
-  // Allocate attribute maps if necessary. 
+  // Allocate attribute maps if necessary.
   // A method will allocate the methods one if needed
-  classInfo.classAttributes = compiler->attributes->count > 0 
-        ? wrenNewMap(compiler->parser->vm) 
+  classInfo.classAttributes = compiler->attributes->count > 0
+        ? wrenNewMap(compiler->parser->vm)
         : NULL;
   classInfo.methodAttributes = NULL;
   // Copy any existing attributes into the class
@@ -3602,7 +3674,7 @@ static void classDefinition(Compiler* compiler, bool isForeign)
   // bytecode will be adjusted by [wrenBindMethod] to take inherited fields
   // into account.
   wrenSymbolTableInit(&classInfo.fields);
-  
+
   // Set up symbol buffers to track duplicate static and instance methods.
   wrenIntBufferInit(&classInfo.methods);
   wrenIntBufferInit(&classInfo.staticMethods);
@@ -3615,17 +3687,17 @@ static void classDefinition(Compiler* compiler, bool isForeign)
   while (!match(compiler, TOKEN_RIGHT_BRACE))
   {
     if (!method(compiler, classVariable)) break;
-    
+
     // Don't require a newline after the last definition.
     if (match(compiler, TOKEN_RIGHT_BRACE)) break;
 
     consumeLine(compiler, "Expect newline after definition in class.");
   }
-  
-  // If any attributes are present, 
+
+  // If any attributes are present,
   // instantiate a ClassAttributes instance for the class
   // and send it over to CODE_END_CLASS
-  bool hasAttr = classInfo.classAttributes != NULL || 
+  bool hasAttr = classInfo.classAttributes != NULL ||
                  classInfo.methodAttributes != NULL;
   if(hasAttr) {
     emitClassAttributes(compiler, &classInfo);
@@ -3642,7 +3714,7 @@ static void classDefinition(Compiler* compiler, bool isForeign)
     compiler->fn->code.data[numFieldsInstruction] =
         (uint8_t)classInfo.fields.count;
   }
-  
+
   // Clear symbol tables for tracking field and method names.
   wrenSymbolTableClear(compiler->parser->vm, &classInfo.fields);
   wrenIntBufferClear(compiler->parser->vm, &classInfo.methods);
@@ -3676,7 +3748,7 @@ static void import(Compiler* compiler)
 
   // Discard the unused result value from calling the module body's closure.
   emitOp(compiler, CODE_POP);
-  
+
   // The for clause is optional.
   if (!match(compiler, TOKEN_FOR)) return;
 
@@ -3684,10 +3756,10 @@ static void import(Compiler* compiler)
   do
   {
     ignoreNewlines(compiler);
-    
+
     consume(compiler, TOKEN_NAME, "Expect variable name.");
-    
-    // We need to hold onto the source variable, 
+
+    // We need to hold onto the source variable,
     // in order to reference it in the import later
     Token sourceVariableToken = compiler->parser->previous;
 
@@ -3789,7 +3861,7 @@ ObjFn* wrenCompile(WrenVM* vm, ObjModule* module, const char* source,
 {
   // Skip the UTF-8 BOM if there is one.
   if (strncmp(source, "\xEF\xBB\xBF", 3) == 0) source += 3;
-  
+
   Parser parser;
   parser.vm = vm;
   parser.module = module;
@@ -3832,7 +3904,7 @@ ObjFn* wrenCompile(WrenVM* vm, ObjModule* module, const char* source,
     while (!match(&compiler, TOKEN_EOF))
     {
       definition(&compiler);
-      
+
       // If there is no newline, it must be the end of file on the same line.
       if (!matchLine(&compiler))
       {
@@ -3840,10 +3912,10 @@ ObjFn* wrenCompile(WrenVM* vm, ObjModule* module, const char* source,
         break;
       }
     }
-    
+
     emitOp(&compiler, CODE_END_MODULE);
   }
-  
+
   emitOp(&compiler, CODE_RETURN);
 
   // See if there are any implicitly declared module-level variables that never
@@ -3861,7 +3933,7 @@ ObjFn* wrenCompile(WrenVM* vm, ObjModule* module, const char* source,
       error(&compiler, "Variable is used but not defined.");
     }
   }
-  
+
   return endCompiler(&compiler, "(script)", 8);
 }
 
@@ -3939,21 +4011,21 @@ void wrenMarkCompiler(WrenVM* vm, Compiler* compiler)
     wrenGrayObj(vm, (Obj*)compiler->fn);
     wrenGrayObj(vm, (Obj*)compiler->constants);
     wrenGrayObj(vm, (Obj*)compiler->attributes);
-    
+
     if (compiler->enclosingClass != NULL)
     {
       wrenBlackenSymbolTable(vm, &compiler->enclosingClass->fields);
 
-      if(compiler->enclosingClass->methodAttributes != NULL) 
+      if(compiler->enclosingClass->methodAttributes != NULL)
       {
         wrenGrayObj(vm, (Obj*)compiler->enclosingClass->methodAttributes);
       }
-      if(compiler->enclosingClass->classAttributes != NULL) 
+      if(compiler->enclosingClass->classAttributes != NULL)
       {
         wrenGrayObj(vm, (Obj*)compiler->enclosingClass->classAttributes);
       }
     }
-    
+
     compiler = compiler->parent;
   }
   while (compiler != NULL);
@@ -3961,7 +4033,7 @@ void wrenMarkCompiler(WrenVM* vm, Compiler* compiler)
 
 // Helpers for Attributes
 
-// Throw an error if any attributes were found preceding, 
+// Throw an error if any attributes were found preceding,
 // and clear the attributes so the error doesn't keep happening.
 static void disallowAttributes(Compiler* compiler)
 {
@@ -3974,8 +4046,8 @@ static void disallowAttributes(Compiler* compiler)
 }
 
 // Add an attribute to a given group in the compiler attribues map
-static void addToAttributeGroup(Compiler* compiler, 
-                                Value group, Value key, Value value) 
+static void addToAttributeGroup(Compiler* compiler,
+                                Value group, Value key, Value value)
 {
   WrenVM* vm = compiler->parser->vm;
 
@@ -3984,20 +4056,20 @@ static void addToAttributeGroup(Compiler* compiler,
   if(IS_OBJ(value)) wrenPushRoot(vm, AS_OBJ(value));
 
   Value groupMapValue = wrenMapGet(compiler->attributes, group);
-  if(IS_UNDEFINED(groupMapValue)) 
+  if(IS_UNDEFINED(groupMapValue))
   {
     groupMapValue = OBJ_VAL(wrenNewMap(vm));
     wrenMapSet(vm, compiler->attributes, group, groupMapValue);
   }
 
-  //we store them as a map per so we can maintain duplicate keys 
+  //we store them as a map per so we can maintain duplicate keys
   //group = { key:[value, ...], }
   ObjMap* groupMap = AS_MAP(groupMapValue);
 
   //var keyItems = group[key]
-  //if(!keyItems) keyItems = group[key] = [] 
+  //if(!keyItems) keyItems = group[key] = []
   Value keyItemsValue = wrenMapGet(groupMap, key);
-  if(IS_UNDEFINED(keyItemsValue)) 
+  if(IS_UNDEFINED(keyItemsValue))
   {
     keyItemsValue = OBJ_VAL(wrenNewList(vm, 0));
     wrenMapSet(vm, groupMap, key, keyItemsValue);
@@ -4014,7 +4086,7 @@ static void addToAttributeGroup(Compiler* compiler,
 
 
 // Emit the attributes in the give map onto the stack
-static void emitAttributes(Compiler* compiler, ObjMap* attributes) 
+static void emitAttributes(Compiler* compiler, ObjMap* attributes)
 {
   // Instantiate a new map for the attributes
   loadCoreVariable(compiler, "Map");
@@ -4060,7 +4132,7 @@ static void emitAttributes(Compiler* compiler, ObjMap* attributes)
 
 }
 
-// Methods are stored as method <-> attributes, so we have to have 
+// Methods are stored as method <-> attributes, so we have to have
 // an indirection to resolve for methods
 static void emitAttributeMethods(Compiler* compiler, ObjMap* attributes)
 {
@@ -4085,12 +4157,12 @@ static void emitClassAttributes(Compiler* compiler, ClassInfo* classInfo)
 {
   loadCoreVariable(compiler, "ClassAttributes");
 
-  classInfo->classAttributes 
-    ? emitAttributes(compiler, classInfo->classAttributes) 
+  classInfo->classAttributes
+    ? emitAttributes(compiler, classInfo->classAttributes)
     : null(compiler, false);
 
-  classInfo->methodAttributes 
-    ? emitAttributeMethods(compiler, classInfo->methodAttributes) 
+  classInfo->methodAttributes
+    ? emitAttributeMethods(compiler, classInfo->methodAttributes)
     : null(compiler, false);
 
   callMethod(compiler, 2, "new(_,_)", 8);
@@ -4106,8 +4178,8 @@ static void copyAttributes(Compiler* compiler, ObjMap* into)
   if(into == NULL) return;
 
   WrenVM* vm = compiler->parser->vm;
-  
-  // Note we copy the actual values as is since we'll take ownership 
+
+  // Note we copy the actual values as is since we'll take ownership
   // and clear the original map
   for(uint32_t attrIdx = 0; attrIdx < compiler->attributes->capacity; attrIdx++)
   {
@@ -4115,7 +4187,7 @@ static void copyAttributes(Compiler* compiler, ObjMap* into)
     if(IS_UNDEFINED(attrEntry->key)) continue;
     wrenMapSet(vm, into, attrEntry->key, attrEntry->value);
   }
-  
+
   wrenMapClear(vm, compiler->attributes);
 }
 
@@ -4123,14 +4195,14 @@ static void copyAttributes(Compiler* compiler, ObjMap* into)
 // attributes for the current enclosingClass.
 // This also resets the counter, since the intent is to consume the attributes
 static void copyMethodAttributes(Compiler* compiler, bool isForeign,
-            bool isStatic, const char* fullSignature, int32_t length) 
+            bool isStatic, const char* fullSignature, int32_t length)
 {
   compiler->numAttributes = 0;
 
   if(compiler->attributes->count == 0) return;
 
   WrenVM* vm = compiler->parser->vm;
-  
+
   // Make a map for this method to copy into
   ObjMap* methodAttr = wrenNewMap(vm);
   wrenPushRoot(vm, (Obj*)methodAttr);
@@ -4143,14 +4215,14 @@ static void copyMethodAttributes(Compiler* compiler, bool isForeign,
   char fullSignatureWithPrefix[MAX_METHOD_SIGNATURE + 8 + 7];
   const char* foreignPrefix = isForeign ? "foreign " : "";
   const char* staticPrefix = isStatic ? "static " : "";
-  sprintf(fullSignatureWithPrefix, "%s%s%.*s", foreignPrefix, staticPrefix, 
+  sprintf(fullSignatureWithPrefix, "%s%s%.*s", foreignPrefix, staticPrefix,
                                                length, fullSignature);
   fullSignatureWithPrefix[fullLength] = '\0';
 
   if(compiler->enclosingClass->methodAttributes == NULL) {
     compiler->enclosingClass->methodAttributes = wrenNewMap(vm);
   }
-  
+
   // Store the method attributes in the class map
   Value key = wrenNewStringLength(vm, fullSignatureWithPrefix, fullLength);
   wrenMapSet(vm, compiler->enclosingClass->methodAttributes, key, OBJ_VAL(methodAttr));
