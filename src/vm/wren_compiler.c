@@ -3197,14 +3197,16 @@ static void whileStatement(Compiler* compiler)
 // XXX debugging macro --- misuse the error-reporting mechanism to print status
 #define REPORT(compiler, ...) \
   do { \
-    error((compiler), __VA_ARGS__); \
-    compiler->parser->hasError = false; \
+    /* error((compiler), __VA_ARGS__);*/ \
+    /* compiler->parser->hasError = false;*/ \
   } while(0)
 
 // Switch: a series of (topic ~~ test) conditions
 static void switchStatement(Compiler* compiler)
 {
   Signature smartmatch = { "~~", 2, SIG_METHOD, 1 };
+  IntBuffer cases;
+  wrenIntBufferInit(&cases);
 
   // TODO not yet supported: break, fallthrough
   REPORT(compiler, "==> Starting switch statement");
@@ -3222,6 +3224,10 @@ static void switchStatement(Compiler* compiler)
     if (match(compiler, TOKEN_ELSE))
     {
       REPORT(compiler, "==> else");
+
+      // optional colon after `else` for ergonomics
+      match(compiler, TOKEN_COLON);
+
       statement(compiler);
       consumeLine(compiler, "Expect newline after switch case.");
       break;
@@ -3248,17 +3254,27 @@ static void switchStatement(Compiler* compiler)
                                   // topic ]
     REPORT(compiler, "==>   statement");
     statement(compiler);
-    // TODO emit jump here to end of switch
+
+    // jump past the rest of the cases
+    int toEndJump = emitJump(compiler, CODE_JUMP);
+    wrenIntBufferWrite(compiler->parser->vm, &cases, toEndJump);
+
     patchJump(compiler, nextCaseJump);
 
     consumeLine(compiler, "Expect newline after switch case.");
 
   }
 
+  // Point all the end-of-case jumps here
+  for (int i=0; i<cases.count; ++i)
+  {
+    patchJump(compiler, cases.data[i]);
+  }
+
   emitOp(compiler, CODE_POP);     // ]
   consume(compiler, TOKEN_RIGHT_BRACE, "Expect '}' after switch body.");
-  consumeLine(compiler, "Expect newline after switch body.");
 }
+
 // Compiles a simple statement. These can only appear at the top-level or
 // within curly blocks. Simple statements exclude variable binding statements
 // like "var" and "class" which are not allowed directly in places like the
