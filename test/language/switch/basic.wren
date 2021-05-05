@@ -5,5 +5,5 @@ switch(1) {
 
 switch(2) {
   1: System.print("one")
-  else: System.print("nope")  // expect: two
+  else: System.print("nope")  // expect: nope
 }
