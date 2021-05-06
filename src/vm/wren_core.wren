@@ -189,9 +189,20 @@ class WhereSequence is Sequence {
   iteratorValue(iterator) { _sequence.iteratorValue(iterator) }
 }
 
+class StringPart {
+  construct new(str) {
+    _str = str
+  }
+
+  ~~(needle) { _str.contains(needle) }
+  !~(needle) { !_str.contains(needle) }
+}
+
 class String is Sequence {
   bytes { StringByteSequence.new(this) }
   codePoints { StringCodePointSequence.new(this) }
+
+  part { StringPart.new(this) }
 
   split(delimiter) {
     if (!(delimiter is String) || delimiter.isEmpty) {
