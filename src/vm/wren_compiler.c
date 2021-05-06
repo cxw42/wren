@@ -3218,7 +3218,7 @@ static void switchStatement(Compiler* compiler)
   consume(compiler, TOKEN_LEFT_BRACE, "Expect '{' after switch topic.");
   consumeLine(compiler, "Expect newline after '{' starting switch statement.");
 
-  while (1)
+  while (!compiler->parser->hasError)
   {
     REPORT(compiler, "==> In loop");
     if (match(compiler, TOKEN_ELSE))
