@@ -3252,15 +3252,12 @@ static void switchStatement(Compiler* compiler)
     emitOp(compiler, CODE_DUP);   // topic topic ]
     if (match(compiler, TOKEN_LEFT_BRACE))
     {
-#if 0
-      // TODO Name the function based on the switch case
-      char blockName[MAX_METHOD_SIGNATURE + 16];
-      int blockLength;
-      signatureToString(&called, blockName, &blockLength);
-      memmove(blockName + blockLength, " block argument", 16);
-#endif
+      if (peek(compiler) != TOKEN_PIPE)
+      {
+        error(compiler, "Hash literals are not allowed in switch cases.  Please use a list of the hash keys instead.");
+      }
 
-      functionLiteral(compiler, "switch case", strlen("switch case"));
+      functionLiteral(compiler, "switch test", 11); // 11 = string length
     }
     else
     {
@@ -3285,7 +3282,6 @@ static void switchStatement(Compiler* compiler)
     patchJump(compiler, nextCaseJump);
 
     consumeLine(compiler, "Expect newline after switch case.");
-
   }
 
   // Point all the end-of-case jumps here
