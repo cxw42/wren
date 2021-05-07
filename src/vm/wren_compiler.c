@@ -3250,7 +3250,22 @@ static void switchStatement(Compiler* compiler)
     REPORT(compiler, "==> test");
     // Normal case: emit topic ~~ test
     emitOp(compiler, CODE_DUP);   // topic topic ]
-    expression(compiler);         // topic topic expression ]
+    if (match(compiler, TOKEN_LEFT_BRACE))
+    {
+#if 0
+      // TODO Name the function based on the switch case
+      char blockName[MAX_METHOD_SIGNATURE + 16];
+      int blockLength;
+      signatureToString(&called, blockName, &blockLength);
+      memmove(blockName + blockLength, " block argument", 16);
+#endif
+
+      functionLiteral(compiler, "switch case", strlen("switch case"));
+    }
+    else
+    {
+      expression(compiler);       // topic topic expression ]
+    }
     emitOp(compiler, CODE_SWAP);  // topic expression topic ]
     callSignature(compiler, CODE_CALL_0, &smartmatch);
                                   // topic didMatch ]

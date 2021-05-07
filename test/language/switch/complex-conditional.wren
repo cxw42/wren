@@ -9,6 +9,7 @@ switch("a") {
 
 // from https://github.com/wren-lang/wren/issues/956#issuecomment-813660551
 
+// Using express Fn.new calls
 switch(7) {
   Fn.new {|v| v>6 }: System.print("yes")   // expect: yes
   // NOTE: this would be much terser with a keyword `fn` or the like!
@@ -19,12 +20,22 @@ switch(5) {
   else System.print("no")           // expect: no
 }
 
+// Using function literals
+switch(7) {
+  {|v| v>6 }: System.print("yes")   // expect: yes
+}
+
+switch(5) {
+  {|v| v>6 }: System.print("yes")
+  else System.print("no")           // expect: no
+}
+
 switch(1) {
-  Fn.new {|v| v != 2 }: System.print("yes")  // expect: yes
+  {|v| v != 2 }: System.print("yes")  // expect: yes
 }
 
 switch(2) {
-  Fn.new {|v| v != 2 }: System.print("yes")
+  {|v| v != 2 }: System.print("yes")
   else System.print("no")             // expect: no
 }
 
@@ -38,11 +49,11 @@ switch(-1) {
 }
 
 switch(2) {
-  Fn.new {|v| v%2 == 0}: System.print("yes")  // expect: yes
+  {|v| v%2 == 0}: System.print("yes")  // expect: yes
 }
 
 switch(1) {
-  Fn.new {|v| v%2 == 0}: System.print("yes")
+  {|v| v%2 == 0}: System.print("yes")
   else System.print("no")           // expect: no
 }
 
