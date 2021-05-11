@@ -65,7 +65,7 @@ sub main {
   my $starttime = time();
   $| = 1;
 
-  my $results = timethese(-10,  # -10 => at least 10 sec. CPU time per test
+  my $results = timethese(-4,  # -4 => at least 4 sec. CPU time per test
     +{
       map { (File::Spec->splitpath($_))[2] => "print '.'; die 'test failed' if system q($wren_test), q($_)" } @tests
     }
