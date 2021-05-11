@@ -1,0 +1,325 @@
++ for i in {0..24}
+++ printf t%04d 0
++ unbuffer ./util/speedtrial.pl test/speedtrials/switch/t0000
+Running using /home/cxw/proj/wren/wren/bin/wren_test:
+test/speedtrials/switch/t0000_s00010_i00100_ifthen.wren
+test/speedtrials/switch/t0000_s00010_i00100_switch.wren
+Benchmark: running t0000_s00010_i00100_ifthen.wren, t0000_s00010_i00100_switch.wren for at least 4 CPU seconds...
+...............................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................t0000_s00010_i00100_ifthen.wren:  4 wallclock secs ( 2.41 usr +  1.65 sys =  4.06 CPU) @ 295.81/s (n=1201)
+...............................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................t0000_s00010_i00100_switch.wren:  4 wallclock secs ( 2.36 usr +  1.71 sys =  4.07 CPU) @ 279.36/s (n=1137)
+Ran for 10 seconds using /home/cxw/proj/wren/wren/bin/wren_test
+                                 Rate t0000_s00010_i00100_switch.wren t0000_s00010_i00100_ifthen.wren
+t0000_s00010_i00100_switch.wren 279/s                              --                             -6%
+t0000_s00010_i00100_ifthen.wren 296/s                              6%                              --
++ for i in {0..24}
+++ printf t%04d 1
++ unbuffer ./util/speedtrial.pl test/speedtrials/switch/t0001
+Running using /home/cxw/proj/wren/wren/bin/wren_test:
+test/speedtrials/switch/t0001_s00032_i00100_ifthen.wren
+test/speedtrials/switch/t0001_s00032_i00100_switch.wren
+Benchmark: running t0001_s00032_i00100_ifthen.wren, t0001_s00032_i00100_switch.wren for at least 4 CPU seconds...
+.........................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................t0001_s00032_i00100_ifthen.wren:  4 wallclock secs ( 2.52 usr +  1.52 sys =  4.04 CPU) @ 249.50/s (n=1008)
+...................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................t0001_s00032_i00100_switch.wren:  4 wallclock secs ( 2.47 usr +  1.67 sys =  4.14 CPU) @ 210.14/s (n=870)
+Ran for 11 seconds using /home/cxw/proj/wren/wren/bin/wren_test
+                                 Rate t0001_s00032_i00100_switch.wren t0001_s00032_i00100_ifthen.wren
+t0001_s00032_i00100_switch.wren 210/s                              --                            -16%
+t0001_s00032_i00100_ifthen.wren 250/s                             19%                              --
++ for i in {0..24}
+++ printf t%04d 2
++ unbuffer ./util/speedtrial.pl test/speedtrials/switch/t0002
+Running using /home/cxw/proj/wren/wren/bin/wren_test:
+test/speedtrials/switch/t0002_s00055_i00100_ifthen.wren
+test/speedtrials/switch/t0002_s00055_i00100_switch.wren
+Benchmark: running t0002_s00055_i00100_ifthen.wren, t0002_s00055_i00100_switch.wren for at least 4 CPU seconds...
+.........................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................t0002_s00055_i00100_ifthen.wren:  4 wallclock secs ( 2.56 usr +  1.57 sys =  4.13 CPU) @ 205.57/s (n=849)
+...................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................t0002_s00055_i00100_switch.wren:  5 wallclock secs ( 2.89 usr +  1.13 sys =  4.02 CPU) @ 172.39/s (n=693)
+Ran for 11 seconds using /home/cxw/proj/wren/wren/bin/wren_test
+                                 Rate t0002_s00055_i00100_switch.wren t0002_s00055_i00100_ifthen.wren
+t0002_s00055_i00100_switch.wren 172/s                              --                            -16%
+t0002_s00055_i00100_ifthen.wren 206/s                             19%                              --
++ for i in {0..24}
+++ printf t%04d 3
++ unbuffer ./util/speedtrial.pl test/speedtrials/switch/t0003
+Running using /home/cxw/proj/wren/wren/bin/wren_test:
+test/speedtrials/switch/t0003_s00077_i00100_ifthen.wren
+test/speedtrials/switch/t0003_s00077_i00100_switch.wren
+Benchmark: running t0003_s00077_i00100_ifthen.wren, t0003_s00077_i00100_switch.wren for at least 4 CPU seconds...
+.......................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................t0003_s00077_i00100_ifthen.wren:  4 wallclock secs ( 3.23 usr +  1.25 sys =  4.48 CPU) @ 180.58/s (n=809)
+............................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................t0003_s00077_i00100_switch.wren:  4 wallclock secs ( 3.31 usr +  1.02 sys =  4.33 CPU) @ 144.11/s (n=624)
+Ran for 10 seconds using /home/cxw/proj/wren/wren/bin/wren_test
+                                 Rate t0003_s00077_i00100_switch.wren t0003_s00077_i00100_ifthen.wren
+t0003_s00077_i00100_switch.wren 144/s                              --                            -20%
+t0003_s00077_i00100_ifthen.wren 181/s                             25%                              --
++ for i in {0..24}
+++ printf t%04d 4
++ unbuffer ./util/speedtrial.pl test/speedtrials/switch/t0004
+Running using /home/cxw/proj/wren/wren/bin/wren_test:
+test/speedtrials/switch/t0004_s00100_i00100_ifthen.wren
+test/speedtrials/switch/t0004_s00100_i00100_switch.wren
+Benchmark: running t0004_s00100_i00100_ifthen.wren, t0004_s00100_i00100_switch.wren for at least 4 CPU seconds...
+............................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................t0004_s00100_i00100_ifthen.wren:  4 wallclock secs ( 3.14 usr +  0.88 sys =  4.02 CPU) @ 162.94/s (n=655)
+..........................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................t0004_s00100_i00100_switch.wren:  4 wallclock secs ( 3.15 usr +  0.87 sys =  4.02 CPU) @ 128.11/s (n=515)
+Ran for 11 seconds using /home/cxw/proj/wren/wren/bin/wren_test
+                                 Rate t0004_s00100_i00100_switch.wren t0004_s00100_i00100_ifthen.wren
+t0004_s00100_i00100_switch.wren 128/s                              --                            -21%
+t0004_s00100_i00100_ifthen.wren 163/s                             27%                              --
++ for i in {0..24}
+++ printf t%04d 5
++ unbuffer ./util/speedtrial.pl test/speedtrials/switch/t0005
+Running using /home/cxw/proj/wren/wren/bin/wren_test:
+test/speedtrials/switch/t0005_s00010_i02575_ifthen.wren
+test/speedtrials/switch/t0005_s00010_i02575_switch.wren
+Benchmark: running t0005_s00010_i02575_ifthen.wren, t0005_s00010_i02575_switch.wren for at least 4 CPU seconds...
+......................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................t0005_s00010_i02575_ifthen.wren:  4 wallclock secs ( 3.61 usr +  0.55 sys =  4.16 CPU) @ 103.85/s (n=432)
+.........................................................................................................................................................................................................................................................................................................................................................................t0005_s00010_i02575_switch.wren:  4 wallclock secs ( 3.63 usr +  0.60 sys =  4.23 CPU) @ 65.96/s (n=279)
+Ran for 11 seconds using /home/cxw/proj/wren/wren/bin/wren_test
+                                  Rate t0005_s00010_i02575_switch.wren t0005_s00010_i02575_ifthen.wren
+t0005_s00010_i02575_switch.wren 66.0/s                              --                            -36%
+t0005_s00010_i02575_ifthen.wren  104/s                             57%                              --
++ for i in {0..24}
+++ printf t%04d 6
++ unbuffer ./util/speedtrial.pl test/speedtrials/switch/t0006
+Running using /home/cxw/proj/wren/wren/bin/wren_test:
+test/speedtrials/switch/t0006_s00032_i02575_ifthen.wren
+test/speedtrials/switch/t0006_s00032_i02575_switch.wren
+Benchmark: running t0006_s00032_i02575_ifthen.wren, t0006_s00032_i02575_switch.wren for at least 4 CPU seconds...
+................................................................................................................................................................................................................t0006_s00032_i02575_ifthen.wren:  4 wallclock secs ( 3.84 usr +  0.26 sys =  4.10 CPU) @ 42.68/s (n=175)
+..........................................................................................................................t0006_s00032_i02575_switch.wren:  4 wallclock secs ( 3.73 usr +  0.43 sys =  4.16 CPU) @ 25.00/s (n=104)
+Ran for 10 seconds using /home/cxw/proj/wren/wren/bin/wren_test
+                                  Rate t0006_s00032_i02575_switch.wren t0006_s00032_i02575_ifthen.wren
+t0006_s00032_i02575_switch.wren 25.0/s                              --                            -41%
+t0006_s00032_i02575_ifthen.wren 42.7/s                             71%                              --
++ for i in {0..24}
+++ printf t%04d 7
++ unbuffer ./util/speedtrial.pl test/speedtrials/switch/t0007
+Running using /home/cxw/proj/wren/wren/bin/wren_test:
+test/speedtrials/switch/t0007_s00055_i02575_ifthen.wren
+test/speedtrials/switch/t0007_s00055_i02575_switch.wren
+Benchmark: running t0007_s00055_i02575_ifthen.wren, t0007_s00055_i02575_switch.wren for at least 4 CPU seconds...
+..................................................................................................................................t0007_s00055_i02575_ifthen.wren:  4 wallclock secs ( 3.80 usr +  0.21 sys =  4.01 CPU) @ 25.94/s (n=104)
+...............................................................................t0007_s00055_i02575_switch.wren:  4 wallclock secs ( 3.73 usr +  0.35 sys =  4.08 CPU) @ 15.69/s (n=64)
+Ran for 10 seconds using /home/cxw/proj/wren/wren/bin/wren_test
+                                  Rate t0007_s00055_i02575_switch.wren t0007_s00055_i02575_ifthen.wren
+t0007_s00055_i02575_switch.wren 15.7/s                              --                            -40%
+t0007_s00055_i02575_ifthen.wren 25.9/s                             65%                              --
++ for i in {0..24}
+++ printf t%04d 8
++ unbuffer ./util/speedtrial.pl test/speedtrials/switch/t0008
+Running using /home/cxw/proj/wren/wren/bin/wren_test:
+test/speedtrials/switch/t0008_s00077_i02575_ifthen.wren
+test/speedtrials/switch/t0008_s00077_i02575_switch.wren
+Benchmark: running t0008_s00077_i02575_ifthen.wren, t0008_s00077_i02575_switch.wren for at least 4 CPU seconds...
+.......................................................................................................t0008_s00077_i02575_ifthen.wren:  4 wallclock secs ( 3.98 usr +  0.13 sys =  4.11 CPU) @ 19.71/s (n=81)
+...........................................................t0008_s00077_i02575_switch.wren:  4 wallclock secs ( 3.78 usr +  0.38 sys =  4.16 CPU) @ 11.54/s (n=48)
+Ran for 10 seconds using /home/cxw/proj/wren/wren/bin/wren_test
+                                  Rate t0008_s00077_i02575_switch.wren t0008_s00077_i02575_ifthen.wren
+t0008_s00077_i02575_switch.wren 11.5/s                              --                            -41%
+t0008_s00077_i02575_ifthen.wren 19.7/s                             71%                              --
++ for i in {0..24}
+++ printf t%04d 9
++ unbuffer ./util/speedtrial.pl test/speedtrials/switch/t0009
+Running using /home/cxw/proj/wren/wren/bin/wren_test:
+test/speedtrials/switch/t0009_s00100_i02575_ifthen.wren
+test/speedtrials/switch/t0009_s00100_i02575_switch.wren
+Benchmark: running t0009_s00100_i02575_ifthen.wren, t0009_s00100_i02575_switch.wren for at least 4 CPU seconds...
+..............................................................................t0009_s00100_i02575_ifthen.wren:  4 wallclock secs ( 3.96 usr +  0.13 sys =  4.09 CPU) @ 15.40/s (n=63)
+..................................................t0009_s00100_i02575_switch.wren:  4 wallclock secs ( 3.83 usr +  0.35 sys =  4.18 CPU) @  9.09/s (n=38)
+Ran for 11 seconds using /home/cxw/proj/wren/wren/bin/wren_test
+                                  Rate t0009_s00100_i02575_switch.wren t0009_s00100_i02575_ifthen.wren
+t0009_s00100_i02575_switch.wren 9.09/s                              --                            -41%
+t0009_s00100_i02575_ifthen.wren 15.4/s                             69%                              --
++ for i in {0..24}
+++ printf t%04d 10
++ unbuffer ./util/speedtrial.pl test/speedtrials/switch/t0010
+Running using /home/cxw/proj/wren/wren/bin/wren_test:
+test/speedtrials/switch/t0010_s00010_i05050_ifthen.wren
+test/speedtrials/switch/t0010_s00010_i05050_switch.wren
+Benchmark: running t0010_s00010_i05050_ifthen.wren, t0010_s00010_i05050_switch.wren for at least 4 CPU seconds...
+...............................................................................................................................................................................................................................................................................................................t0010_s00010_i05050_ifthen.wren:  5 wallclock secs ( 3.67 usr +  0.42 sys =  4.09 CPU) @ 58.68/s (n=240)
+....................................................................................................................................................................................................t0010_s00010_i05050_switch.wren:  4 wallclock secs ( 3.60 usr +  0.50 sys =  4.10 CPU) @ 38.54/s (n=158)
+Ran for 11 seconds using /home/cxw/proj/wren/wren/bin/wren_test
+                                  Rate t0010_s00010_i05050_switch.wren t0010_s00010_i05050_ifthen.wren
+t0010_s00010_i05050_switch.wren 38.5/s                              --                            -34%
+t0010_s00010_i05050_ifthen.wren 58.7/s                             52%                              --
++ for i in {0..24}
+++ printf t%04d 11
++ unbuffer ./util/speedtrial.pl test/speedtrials/switch/t0011
+Running using /home/cxw/proj/wren/wren/bin/wren_test:
+test/speedtrials/switch/t0011_s00032_i05050_ifthen.wren
+test/speedtrials/switch/t0011_s00032_i05050_switch.wren
+Benchmark: running t0011_s00032_i05050_ifthen.wren, t0011_s00032_i05050_switch.wren for at least 4 CPU seconds...
+................................................................................................................t0011_s00032_i05050_ifthen.wren:  4 wallclock secs ( 3.88 usr +  0.17 sys =  4.05 CPU) @ 23.46/s (n=95)
+...................................................................t0011_s00032_i05050_switch.wren:  4 wallclock secs ( 3.75 usr +  0.45 sys =  4.20 CPU) @ 13.81/s (n=58)
+Ran for 10 seconds using /home/cxw/proj/wren/wren/bin/wren_test
+                                  Rate t0011_s00032_i05050_switch.wren t0011_s00032_i05050_ifthen.wren
+t0011_s00032_i05050_switch.wren 13.8/s                              --                            -41%
+t0011_s00032_i05050_ifthen.wren 23.5/s                             70%                              --
++ for i in {0..24}
+++ printf t%04d 12
++ unbuffer ./util/speedtrial.pl test/speedtrials/switch/t0012
+Running using /home/cxw/proj/wren/wren/bin/wren_test:
+test/speedtrials/switch/t0012_s00055_i05050_ifthen.wren
+test/speedtrials/switch/t0012_s00055_i05050_switch.wren
+Benchmark: running t0012_s00055_i05050_ifthen.wren, t0012_s00055_i05050_switch.wren for at least 4 CPU seconds...
+.....................................................................t0012_s00055_i05050_ifthen.wren:  4 wallclock secs ( 4.04 usr +  0.11 sys =  4.15 CPU) @ 14.46/s (n=60)
+.........................................t0012_s00055_i05050_switch.wren:  4 wallclock secs ( 3.71 usr +  0.35 sys =  4.06 CPU) @  8.37/s (n=34)
+Ran for 10 seconds using /home/cxw/proj/wren/wren/bin/wren_test
+                                  Rate t0012_s00055_i05050_switch.wren t0012_s00055_i05050_ifthen.wren
+t0012_s00055_i05050_switch.wren 8.37/s                              --                            -42%
+t0012_s00055_i05050_ifthen.wren 14.5/s                             73%                              --
++ for i in {0..24}
+++ printf t%04d 13
++ unbuffer ./util/speedtrial.pl test/speedtrials/switch/t0013
+Running using /home/cxw/proj/wren/wren/bin/wren_test:
+test/speedtrials/switch/t0013_s00077_i05050_ifthen.wren
+test/speedtrials/switch/t0013_s00077_i05050_switch.wren
+Benchmark: running t0013_s00077_i05050_ifthen.wren, t0013_s00077_i05050_switch.wren for at least 4 CPU seconds...
+.......................................................t0013_s00077_i05050_ifthen.wren:  4 wallclock secs ( 4.09 usr +  0.08 sys =  4.17 CPU) @ 10.55/s (n=44)
+................................t0013_s00077_i05050_switch.wren:  4 wallclock secs ( 3.72 usr +  0.37 sys =  4.09 CPU) @  6.11/s (n=25)
+Ran for 11 seconds using /home/cxw/proj/wren/wren/bin/wren_test
+                                  Rate t0013_s00077_i05050_switch.wren t0013_s00077_i05050_ifthen.wren
+t0013_s00077_i05050_switch.wren 6.11/s                              --                            -42%
+t0013_s00077_i05050_ifthen.wren 10.6/s                             73%                              --
++ for i in {0..24}
+++ printf t%04d 14
++ unbuffer ./util/speedtrial.pl test/speedtrials/switch/t0014
+Running using /home/cxw/proj/wren/wren/bin/wren_test:
+test/speedtrials/switch/t0014_s00100_i05050_ifthen.wren
+test/speedtrials/switch/t0014_s00100_i05050_switch.wren
+Benchmark: running t0014_s00100_i05050_ifthen.wren, t0014_s00100_i05050_switch.wren for at least 4 CPU seconds...
+.........................................t0014_s00100_i05050_ifthen.wren:  4 wallclock secs ( 4.02 usr +  0.07 sys =  4.09 CPU) @  8.31/s (n=34)
+.......................t0014_s00100_i05050_switch.wren:  4 wallclock secs ( 3.83 usr +  0.37 sys =  4.20 CPU) @  4.76/s (n=20)
+Ran for 10 seconds using /home/cxw/proj/wren/wren/bin/wren_test
+                                  Rate t0014_s00100_i05050_switch.wren t0014_s00100_i05050_ifthen.wren
+t0014_s00100_i05050_switch.wren 4.76/s                              --                            -43%
+t0014_s00100_i05050_ifthen.wren 8.31/s                             75%                              --
++ for i in {0..24}
+++ printf t%04d 15
++ unbuffer ./util/speedtrial.pl test/speedtrials/switch/t0015
+Running using /home/cxw/proj/wren/wren/bin/wren_test:
+test/speedtrials/switch/t0015_s00010_i07525_ifthen.wren
+test/speedtrials/switch/t0015_s00010_i07525_switch.wren
+Benchmark: running t0015_s00010_i07525_ifthen.wren, t0015_s00010_i07525_switch.wren for at least 4 CPU seconds...
+................................................................................................................................................................................................................................t0015_s00010_i07525_ifthen.wren:  4 wallclock secs ( 3.84 usr +  0.30 sys =  4.14 CPU) @ 45.89/s (n=190)
+.....................................................................................................................................t0015_s00010_i07525_switch.wren:  4 wallclock secs ( 3.82 usr +  0.44 sys =  4.26 CPU) @ 27.00/s (n=115)
+Ran for 10 seconds using /home/cxw/proj/wren/wren/bin/wren_test
+                                  Rate t0015_s00010_i07525_switch.wren t0015_s00010_i07525_ifthen.wren
+t0015_s00010_i07525_switch.wren 27.0/s                              --                            -41%
+t0015_s00010_i07525_ifthen.wren 45.9/s                             70%                              --
++ for i in {0..24}
+++ printf t%04d 16
++ unbuffer ./util/speedtrial.pl test/speedtrials/switch/t0016
+Running using /home/cxw/proj/wren/wren/bin/wren_test:
+test/speedtrials/switch/t0016_s00032_i07525_ifthen.wren
+test/speedtrials/switch/t0016_s00032_i07525_switch.wren
+Benchmark: running t0016_s00032_i07525_ifthen.wren, t0016_s00032_i07525_switch.wren for at least 4 CPU seconds...
+..............................................................................t0016_s00032_i07525_ifthen.wren:  4 wallclock secs ( 4.01 usr +  0.15 sys =  4.16 CPU) @ 16.35/s (n=68)
+..............................................t0016_s00032_i07525_switch.wren:  4 wallclock secs ( 3.73 usr +  0.34 sys =  4.07 CPU) @  9.58/s (n=39)
+Ran for 10 seconds using /home/cxw/proj/wren/wren/bin/wren_test
+                                  Rate t0016_s00032_i07525_switch.wren t0016_s00032_i07525_ifthen.wren
+t0016_s00032_i07525_switch.wren 9.58/s                              --                            -41%
+t0016_s00032_i07525_ifthen.wren 16.3/s                             71%                              --
++ for i in {0..24}
+++ printf t%04d 17
++ unbuffer ./util/speedtrial.pl test/speedtrials/switch/t0017
+Running using /home/cxw/proj/wren/wren/bin/wren_test:
+test/speedtrials/switch/t0017_s00055_i07525_ifthen.wren
+test/speedtrials/switch/t0017_s00055_i07525_switch.wren
+Benchmark: running t0017_s00055_i07525_ifthen.wren, t0017_s00055_i07525_switch.wren for at least 4 CPU seconds...
+.....................................................t0017_s00055_i07525_ifthen.wren:  3 wallclock secs ( 4.12 usr +  0.07 sys =  4.19 CPU) @ 10.02/s (n=42)
+.............................t0017_s00055_i07525_switch.wren:  3 wallclock secs ( 3.78 usr +  0.37 sys =  4.15 CPU) @  5.78/s (n=24)
+Ran for 10 seconds using /home/cxw/proj/wren/wren/bin/wren_test
+                                  Rate t0017_s00055_i07525_switch.wren t0017_s00055_i07525_ifthen.wren
+t0017_s00055_i07525_switch.wren 5.78/s                              --                            -42%
+t0017_s00055_i07525_ifthen.wren 10.0/s                             73%                              --
++ for i in {0..24}
+++ printf t%04d 18
++ unbuffer ./util/speedtrial.pl test/speedtrials/switch/t0018
+Running using /home/cxw/proj/wren/wren/bin/wren_test:
+test/speedtrials/switch/t0018_s00077_i07525_ifthen.wren
+test/speedtrials/switch/t0018_s00077_i07525_switch.wren
+Benchmark: running t0018_s00077_i07525_ifthen.wren, t0018_s00077_i07525_switch.wren for at least 4 CPU seconds...
+..................................t0018_s00077_i07525_ifthen.wren:  4 wallclock secs ( 4.07 usr +  0.07 sys =  4.14 CPU) @  7.25/s (n=30)
+.....................t0018_s00077_i07525_switch.wren:  4 wallclock secs ( 3.74 usr +  0.34 sys =  4.08 CPU) @  4.17/s (n=17)
+Ran for 10 seconds using /home/cxw/proj/wren/wren/bin/wren_test
+                                  Rate t0018_s00077_i07525_switch.wren t0018_s00077_i07525_ifthen.wren
+t0018_s00077_i07525_switch.wren 4.17/s                              --                            -42%
+t0018_s00077_i07525_ifthen.wren 7.25/s                             74%                              --
++ for i in {0..24}
+++ printf t%04d 19
++ unbuffer ./util/speedtrial.pl test/speedtrials/switch/t0019
+Running using /home/cxw/proj/wren/wren/bin/wren_test:
+test/speedtrials/switch/t0019_s00100_i07525_ifthen.wren
+test/speedtrials/switch/t0019_s00100_i07525_switch.wren
+Benchmark: running t0019_s00100_i07525_ifthen.wren, t0019_s00100_i07525_switch.wren for at least 4 CPU seconds...
+............................t0019_s00100_i07525_ifthen.wren:  5 wallclock secs ( 4.01 usr +  0.07 sys =  4.08 CPU) @  5.64/s (n=23)
+................t0019_s00100_i07525_switch.wren:  4 wallclock secs ( 3.75 usr +  0.29 sys =  4.04 CPU) @  3.22/s (n=13)
+Ran for 10 seconds using /home/cxw/proj/wren/wren/bin/wren_test
+                                  Rate t0019_s00100_i07525_switch.wren t0019_s00100_i07525_ifthen.wren
+t0019_s00100_i07525_switch.wren 3.22/s                              --                            -43%
+t0019_s00100_i07525_ifthen.wren 5.64/s                             75%                              --
++ for i in {0..24}
+++ printf t%04d 20
++ unbuffer ./util/speedtrial.pl test/speedtrials/switch/t0020
+Running using /home/cxw/proj/wren/wren/bin/wren_test:
+test/speedtrials/switch/t0020_s00010_i10000_ifthen.wren
+test/speedtrials/switch/t0020_s00010_i10000_switch.wren
+Benchmark: running t0020_s00010_i10000_ifthen.wren, t0020_s00010_i10000_switch.wren for at least 4 CPU seconds...
+.................................................................................................................................................................t0020_s00010_i10000_ifthen.wren:  4 wallclock secs ( 3.78 usr +  0.25 sys =  4.03 CPU) @ 34.74/s (n=140)
+..........................................................................................................t0020_s00010_i10000_switch.wren:  4 wallclock secs ( 3.57 usr +  0.44 sys =  4.01 CPU) @ 20.70/s (n=83)
+Ran for 10 seconds using /home/cxw/proj/wren/wren/bin/wren_test
+                                  Rate t0020_s00010_i10000_switch.wren t0020_s00010_i10000_ifthen.wren
+t0020_s00010_i10000_switch.wren 20.7/s                              --                            -40%
+t0020_s00010_i10000_ifthen.wren 34.7/s                             68%                              --
++ for i in {0..24}
+++ printf t%04d 21
++ unbuffer ./util/speedtrial.pl test/speedtrials/switch/t0021
+Running using /home/cxw/proj/wren/wren/bin/wren_test:
+test/speedtrials/switch/t0021_s00032_i10000_ifthen.wren
+test/speedtrials/switch/t0021_s00032_i10000_switch.wren
+Benchmark: running t0021_s00032_i10000_ifthen.wren, t0021_s00032_i10000_switch.wren for at least 4 CPU seconds...
+............................................................t0021_s00032_i10000_ifthen.wren:  4 wallclock secs ( 3.98 usr +  0.10 sys =  4.08 CPU) @ 12.75/s (n=52)
+..................................t0021_s00032_i10000_switch.wren:  4 wallclock secs ( 3.82 usr +  0.32 sys =  4.14 CPU) @  7.25/s (n=30)
+Ran for 9 seconds using /home/cxw/proj/wren/wren/bin/wren_test
+                                  Rate t0021_s00032_i10000_switch.wren t0021_s00032_i10000_ifthen.wren
+t0021_s00032_i10000_switch.wren 7.25/s                              --                            -43%
+t0021_s00032_i10000_ifthen.wren 12.7/s                             76%                              --
++ for i in {0..24}
+++ printf t%04d 22
++ unbuffer ./util/speedtrial.pl test/speedtrials/switch/t0022
+Running using /home/cxw/proj/wren/wren/bin/wren_test:
+test/speedtrials/switch/t0022_s00055_i10000_ifthen.wren
+test/speedtrials/switch/t0022_s00055_i10000_switch.wren
+Benchmark: running t0022_s00055_i10000_ifthen.wren, t0022_s00055_i10000_switch.wren for at least 4 CPU seconds...
+...................................t0022_s00055_i10000_ifthen.wren:  4 wallclock secs ( 4.00 usr +  0.07 sys =  4.07 CPU) @  7.62/s (n=31)
+......................t0022_s00055_i10000_switch.wren:  4 wallclock secs ( 3.81 usr +  0.31 sys =  4.12 CPU) @  4.37/s (n=18)
+Ran for 9 seconds using /home/cxw/proj/wren/wren/bin/wren_test
+                                  Rate t0022_s00055_i10000_switch.wren t0022_s00055_i10000_ifthen.wren
+t0022_s00055_i10000_switch.wren 4.37/s                              --                            -43%
+t0022_s00055_i10000_ifthen.wren 7.62/s                             74%                              --
++ for i in {0..24}
+++ printf t%04d 23
++ unbuffer ./util/speedtrial.pl test/speedtrials/switch/t0023
+Running using /home/cxw/proj/wren/wren/bin/wren_test:
+test/speedtrials/switch/t0023_s00077_i10000_ifthen.wren
+test/speedtrials/switch/t0023_s00077_i10000_switch.wren
+Benchmark: running t0023_s00077_i10000_ifthen.wren, t0023_s00077_i10000_switch.wren for at least 4 CPU seconds...
+...........................t0023_s00077_i10000_ifthen.wren:  5 wallclock secs ( 3.96 usr +  0.04 sys =  4.00 CPU) @  5.50/s (n=22)
+................t0023_s00077_i10000_switch.wren:  4 wallclock secs ( 3.79 usr +  0.33 sys =  4.12 CPU) @  3.16/s (n=13)
+Ran for 11 seconds using /home/cxw/proj/wren/wren/bin/wren_test
+                                  Rate t0023_s00077_i10000_switch.wren t0023_s00077_i10000_ifthen.wren
+t0023_s00077_i10000_switch.wren 3.16/s                              --                            -43%
+t0023_s00077_i10000_ifthen.wren 5.50/s                             74%                              --
++ for i in {0..24}
+++ printf t%04d 24
++ unbuffer ./util/speedtrial.pl test/speedtrials/switch/t0024
+Running using /home/cxw/proj/wren/wren/bin/wren_test:
+test/speedtrials/switch/t0024_s00100_i10000_ifthen.wren
+test/speedtrials/switch/t0024_s00100_i10000_switch.wren
+Benchmark: running t0024_s00100_i10000_ifthen.wren, t0024_s00100_i10000_switch.wren for at least 4 CPU seconds...
+......................t0024_s00100_i10000_ifthen.wren:  4 wallclock secs ( 3.97 usr +  0.04 sys =  4.01 CPU) @  4.24/s (n=17)
+...........t0024_s00100_i10000_switch.wren:  4 wallclock secs ( 3.79 usr +  0.35 sys =  4.14 CPU) @  2.42/s (n=10)
+Ran for 10 seconds using /home/cxw/proj/wren/wren/bin/wren_test
+                                  Rate t0024_s00100_i10000_switch.wren t0024_s00100_i10000_ifthen.wren
+t0024_s00100_i10000_switch.wren 2.42/s                              --                            -43%
+t0024_s00100_i10000_ifthen.wren 4.24/s                             76%                              --
