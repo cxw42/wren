@@ -73,7 +73,15 @@ sub main {
   my $duration = time() - $starttime;
 
   print("Ran for $duration seconds using $wren_test\n");
-  cmpthese($results);
+  cmpthese($results); # detailed report
+
+  # CSV summary.  Thanks to Benchmark::cmpthese() for the math below.
+  my $report = qq("$stem");
+  for my $test (sort keys %$results) {
+    $report .= qq(,"$test",) . $results->{$test}->iters/($results->{$test}->elapsed+0.000000000000001);
+  }
+  print "$report\n";  # should be the only thing matching /^"/ in the log file.
+
   return 0;
 } #main()
 
@@ -119,5 +127,10 @@ AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
 LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
+
+=head2 Benchmark
+
+Some code from L<Benchmark>, which is distributed under the same terms as Perl
+itself and is used according to those terms.
 
 =cut

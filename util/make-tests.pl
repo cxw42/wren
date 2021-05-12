@@ -47,6 +47,9 @@ sub make_test {
   my ($testidx, $size, $iter, $testpath) = @_;
   my $stem = sprintf("t%04d_s%05d_i%05d", $testidx, $size, $iter);
   make_switch_test(File::Spec->join($testpath, "${stem}_switch.wren"), $size, $iter);
+  make_fn_test(File::Spec->join($testpath, "${stem}_fn.wren"), $size, $iter);
+  make_switch_hoisted_test_test(File::Spec->join($testpath, "${stem}_switch_hoisted_test.wren"), $size, $iter);
+  make_fn_hoisted_test_test(File::Spec->join($testpath, "${stem}_fn_hoisted_test.wren"), $size, $iter);
   make_ifthen_test(File::Spec->join($testpath, "${stem}_ifthen.wren"), $size, $iter);
 }
 
@@ -63,6 +66,82 @@ EOT
 
   foreach my $case (1..$size) {
     print $fh "    \"$case\".part: Fiber.abort(\"matched $case\")\n"
+  }
+
+  print $fh <<EOT;
+  } //switch
+} //iter
+EOT
+  close $fh;
+}
+
+sub make_fn_test {
+  my ($fn, $size, $iter) = @_;
+  print STDERR "Making $fn\n";
+
+  open my $fh, '>', $fn;
+  print $fh <<EOT;
+for(iter in 1..$iter) {
+  var topic = "a" // can't possibly match
+  switch(topic) {
+EOT
+
+  foreach my $case (1..$size) {
+    print $fh "    {|v| \"$case\".contains(v) }: Fiber.abort(\"matched $case\")\n"
+  }
+
+  print $fh <<EOT;
+  } //switch
+} //iter
+EOT
+  close $fh;
+}
+
+sub make_switch_hoisted_test_test {
+  my ($fn, $size, $iter) = @_;
+  print STDERR "Making $fn\n";
+
+  open my $fh, '>', $fn;
+  print $fh <<EOT;
+for(iter in 1..$iter) {
+  var topic = "a" // can't possibly match
+EOT
+
+  foreach my $case (1..$size) {
+    print $fh "  var case$case = \"$case\".part\n";
+  }
+
+  print $fh "  switch(topic) {\n";
+
+  foreach my $case (1..$size) {
+    print $fh "    case$case: Fiber.abort(\"matched $case\")\n"
+  }
+
+  print $fh <<EOT;
+  } //switch
+} //iter
+EOT
+  close $fh;
+}
+
+sub make_fn_hoisted_test_test {
+  my ($fn, $size, $iter) = @_;
+  print STDERR "Making $fn\n";
+
+  open my $fh, '>', $fn;
+  print $fh <<EOT;
+for(iter in 1..$iter) {
+  var topic = "a" // can't possibly match
+EOT
+
+  foreach my $case (1..$size) {
+    print $fh "  var case$case = Fn.new { |v| \"$case\".contains(v) }\n";
+  }
+
+  print $fh "  switch(topic) {\n";
+
+  foreach my $case (1..$size) {
+    print $fh "    case$case: Fiber.abort(\"matched $case\")\n"
   }
 
   print $fh <<EOT;
