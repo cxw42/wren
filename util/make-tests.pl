@@ -102,6 +102,7 @@ sub make_switch_hoisted_test_test {
   print STDERR "Making $fn\n";
 
   open my $fh, '>', $fn;
+  die "TODO FIXME --- this is wrong --- the case\$case need to be created outside the loop";
   print $fh <<EOT;
 for(iter in 1..$iter) {
   var topic = "a" // can't possibly match
@@ -129,6 +130,7 @@ sub make_fn_hoisted_test_test {
   print STDERR "Making $fn\n";
 
   open my $fh, '>', $fn;
+  die "TODO FIXME --- this is wrong --- the case\$case need to be created outside the loop";
   print $fh <<EOT;
 for(iter in 1..$iter) {
   var topic = "a" // can't possibly match
