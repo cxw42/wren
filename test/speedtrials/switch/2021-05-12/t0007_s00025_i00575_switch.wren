@@ -1,0 +1,30 @@
+for(iter in 1..575) {
+  var topic = "a" // can't possibly match
+  switch(topic) {
+    "1".part: 1            //Fiber.abort("matched 1")
+    "2".part: 1            //Fiber.abort("matched 2")
+    "3".part: 1            //Fiber.abort("matched 3")
+    "4".part: 1            //Fiber.abort("matched 4")
+    "5".part: 1            //Fiber.abort("matched 5")
+    "6".part: 1            //Fiber.abort("matched 6")
+    "7".part: 1            //Fiber.abort("matched 7")
+    "8".part: 1            //Fiber.abort("matched 8")
+    "9".part: 1            //Fiber.abort("matched 9")
+    "10".part: 1            //Fiber.abort("matched 10")
+    "11".part: 1            //Fiber.abort("matched 11")
+    "12".part: 1            //Fiber.abort("matched 12")
+    "13".part: 1            //Fiber.abort("matched 13")
+    "14".part: 1            //Fiber.abort("matched 14")
+    "15".part: 1            //Fiber.abort("matched 15")
+    "16".part: 1            //Fiber.abort("matched 16")
+    "17".part: 1            //Fiber.abort("matched 17")
+    "18".part: 1            //Fiber.abort("matched 18")
+    "19".part: 1            //Fiber.abort("matched 19")
+    "20".part: 1            //Fiber.abort("matched 20")
+    "21".part: 1            //Fiber.abort("matched 21")
+    "22".part: 1            //Fiber.abort("matched 22")
+    "23".part: 1            //Fiber.abort("matched 23")
+    "24".part: 1            //Fiber.abort("matched 24")
+    "25".part: 1            //Fiber.abort("matched 25")
+  } //switch
+} //iter
