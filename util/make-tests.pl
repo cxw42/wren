@@ -1,4 +1,5 @@
 #!/usr/bin/env perl
+# NOTE: run `perltidy -b -pro=.perltidyrc util/*.pl` to pretty-print
 
 =head1 NAME
 
@@ -20,6 +21,8 @@ use autodie;
 use File::Spec;
 use FindBin;
 use Pod::Usage qw(pod2usage);
+
+my $FIBER = "Fiber";
 
 exit main(@ARGV);
 
@@ -83,7 +86,7 @@ for(iter in 1..$iter) {
 EOT
 
   foreach my $case (1 .. $size) {
-    print $fh "    \"$case\".part: Fiber.abort(\"matched $case\")\n";
+    print $fh "    \"$case\".part: $FIBER.abort(\"matched $case\")\n";
   }
 
   print $fh <<EOT;
@@ -106,7 +109,7 @@ EOT
 
   foreach my $case (1 .. $size) {
     print $fh
-      "    {|v| \"$case\".contains(v) }: Fiber.abort(\"matched $case\")\n";
+      "    {|v| \"$case\".contains(v) }: $FIBER.abort(\"matched $case\")\n";
   }
 
   print $fh <<EOT;
@@ -135,7 +138,7 @@ for(iter in 1..$iter) {
 EOT
 
   foreach my $case (1 .. $size) {
-    print $fh "    case$case: Fiber.abort(\"matched $case\")\n";
+    print $fh "    case$case: $FIBER.abort(\"matched $case\")\n";
   }
 
   print $fh <<EOT;
@@ -165,7 +168,7 @@ EOT
   print $fh "  switch(topic) {\n";
 
   foreach my $case (1 .. $size) {
-    print $fh "    case$case: Fiber.abort(\"matched $case\")\n";
+    print $fh "    case$case: $FIBER.abort(\"matched $case\")\n";
   }
 
   print $fh <<EOT;
@@ -189,7 +192,7 @@ EOT
     print $fh "  } else" unless $case == 1;
     print $fh <<EOT;
   if("$case".contains(topic)) {
-    Fiber.abort("matched $case")
+    $FIBER.abort("matched $case")
 EOT
   } ## end foreach my $case (1 .. $size)
 
@@ -219,7 +222,7 @@ for(iter in 1..$iter) {
 EOT
 
   foreach my $case (1 .. $size) {
-    print $fh "    \"$case\": Fiber.abort(\"matched $case\")\n";
+    print $fh "    \"$case\": $FIBER.abort(\"matched $case\")\n";
   }
 
   print $fh <<EOT;

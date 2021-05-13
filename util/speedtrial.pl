@@ -1,4 +1,5 @@
 #!/usr/bin/env perl
+# NOTE: run `perltidy -b -pro=.perltidyrc util/*.pl` to pretty-print
 
 =head1 NAME
 
