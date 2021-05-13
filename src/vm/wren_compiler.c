@@ -112,6 +112,7 @@ typedef enum
   TOKEN_VAR,
   TOKEN_WHILE,
   TOKEN_SWITCH,
+  TOKEN_SWITCHEQ,
 
   TOKEN_FIELD,
   TOKEN_STATIC_FIELD,
@@ -625,6 +626,7 @@ static Keyword keywords[] =
   {"var",       3, TOKEN_VAR},
   {"while",     5, TOKEN_WHILE},
   {"switch",    6, TOKEN_SWITCH},
+  {"switcheq",  8, TOKEN_SWITCHEQ},
   {NULL,        0, TOKEN_EOF} // Sentinel to mark the end of the array.
 };
 
@@ -2836,6 +2838,7 @@ GrammarRule rules[] =
   /* TOKEN_VAR           */ UNUSED,
   /* TOKEN_WHILE         */ UNUSED,
   /* TOKEN_SWITCH        */ UNUSED,
+  /* TOKEN_SWITCHEQ      */ UNUSED,
   /* TOKEN_FIELD         */ PREFIX(field),
   /* TOKEN_STATIC_FIELD  */ PREFIX(staticField),
   /* TOKEN_NAME          */ { name, NULL, namedSignature, PREC_NONE, NULL },
@@ -3202,9 +3205,9 @@ static void whileStatement(Compiler* compiler)
 }
 
 // Switch: a series of (topic ~~ test) conditions
-static void switchStatement(Compiler* compiler)
+static void switchStatement(Compiler* compiler, bool isSmartmatch)
 {
-  Signature smartmatch = { "~~", 2, SIG_METHOD, 1 };
+  Signature comparison = { (isSmartmatch ? "~~" : "=="), 2, SIG_METHOD, 1 };
   IntBuffer cases;
   wrenIntBufferInit(&cases);
 
@@ -3247,8 +3250,12 @@ static void switchStatement(Compiler* compiler)
     {
       expression(compiler);
     }
-    emitOp(compiler, CODE_SWAP);  // smartmatch: make the test the invocant
-    callSignature(compiler, CODE_CALL_0, &smartmatch);
+
+    if (isSmartmatch)
+    {
+      emitOp(compiler, CODE_SWAP);  // smartmatch: make the test the invocant
+    }
+    callSignature(compiler, CODE_CALL_0, &comparison);
 
     consume(compiler, TOKEN_COLON, "Expect ':' after switch expression.");
 
@@ -3356,7 +3363,11 @@ void statement(Compiler* compiler)
   }
   else if (match(compiler, TOKEN_SWITCH))
   {
-    switchStatement(compiler);
+    switchStatement(compiler, true);
+  }
+  else if (match(compiler, TOKEN_SWITCHEQ))
+  {
+    switchStatement(compiler, false);
   }
   else if (match(compiler, TOKEN_LEFT_BRACE))
   {
