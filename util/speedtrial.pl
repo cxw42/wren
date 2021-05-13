@@ -40,21 +40,22 @@ BEGIN {
   no warnings 'redefine';
   *Benchmark::timeit = sub {
     my $times = $orig_timeit->(@_);
+
     #my($r, $pu, $ps, $cu, $cs, $n) = @$times;
 
-    $times->[1] += $times->[3]; # Move user time from children to parent
+    $times->[1] += $times->[3];    # Move user time from children to parent
     $times->[3] = 0;
-    $times->[2] += $times->[4]; # Move system time from children to parent
+    $times->[2] += $times->[4];    # Move system time from children to parent
     $times->[4] = 0;
 
     return $times;
   }
-}
+} ## end BEGIN
 
 ### main ####################################################################
 
 sub main {
-  my %opts = parse_args(@_);
+  my %opts  = parse_args(@_);
   my @tests = <$opts{stem}*.wren>;
   die "Couldn't find any tests for $opts{stem}" unless @tests;
 
@@ -66,20 +67,24 @@ sub main {
   my $starttime = time();
   $| = 1;
 
-  my $results = timethese(-$opts{cpu_secs},
+  my $results = timethese(
+    -$opts{cpu_secs},
     +{
-      map { (File::Spec->splitpath($_))[2] => "print '.'; die 'test failed' if system q($wren_test), q($_)" } @tests
+      map {
+        (File::Spec->splitpath($_))[2] =>
+          "print '.'; die 'test failed' if system q($wren_test), q($_)"
+      } @tests
     }
   );
   my $duration = time() - $starttime;
 
   print("Ran for $duration seconds using $wren_test\n");
-  cmpthese($results); # detailed report
+  cmpthese($results);    # detailed report
 
   report_csv($opts{csv}, $opts{stem}, $results) if $opts{csv};
 
   return 0;
-} #main()
+} ## end sub main
 
 sub parse_args {
   my %opts;
@@ -88,9 +93,10 @@ sub parse_args {
   # Syntax thanks to http://www.perlmonks.org/?node_id=696592
   local *have = sub { return exists($opts{ $_[0] }); };
 
-  GetOptionsFromArray(\@_, \%opts,
-      'usage|?', 'h|help', 'man',    # options we handle here
-      'csv=s', 'cpu_secs|cpu-secs=s',
+  GetOptionsFromArray(
+    \@_,       \%opts,
+    'usage|?', 'h|help', 'man',    # options we handle here
+    'csv=s',   'cpu_secs|cpu-secs=s',
   ) or pod2usage(2);
   pod2usage(2) unless @_ == 1;
   $opts{stem} = shift;
@@ -99,10 +105,10 @@ sub parse_args {
   pod2usage(-verbose => 1, -exitval => 0) if have('h');
   pod2usage(-verbose => 2, -exitval => 0) if have('man');
 
-  $opts{cpu_secs} ||= 4;  # default CPU time, in seconds, per test
+  $opts{cpu_secs} ||= 4;    # default CPU time, in seconds, per test
 
   return %opts;
-}
+} ## end sub parse_args
 
 ### Helpers #################################################################
 
@@ -112,12 +118,15 @@ sub report_csv {
   # CSV summary.  Thanks to Benchmark::cmpthese() for the math below.
   my $report = qq("$stem","@{[scalar localtime]}");
   for my $test (sort keys %$results) {
-    $report .= qq(,"$test",) . $results->{$test}->iters/($results->{$test}->elapsed+0.000000000000001);
-  }
+    $report .=
+      qq(,"$test",)
+      . $results->{$test}->iters /
+      ($results->{$test}->elapsed + 0.000000000000001);
+  } ## end for my $test (sort keys...)
   open my $fh, '>>', $fn;
-  print $fh "$report\n";  # should be the only thing matching /^"/ in the log file.
+  print $fh "$report\n";
   close $fh;
-}
+} ## end sub report_csv
 
 sub find_wren_test {
   my ($vol, $dirs, $file) = File::Spec->splitpath($FindBin::Bin);
@@ -127,10 +136,11 @@ sub find_wren_test {
   $dirs = File::Spec->catdir(@dirs);
   my $path = File::Spec->catpath($vol, $dirs, "wren_test$Config{exe_ext}");
   unless(-f $path && -x $path) {
-    die "Wren test program $path not found or not executable.\nPlease build Wren and try again.\n"
+    die
+"Wren test program $path not found or not executable.\nPlease build Wren and try again.\n";
   }
   return $path;
-} #find_wren_test()
+} ## end sub find_wren_test
 
 ### Docs ####################################################################
 __END__

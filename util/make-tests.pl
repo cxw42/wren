@@ -30,8 +30,12 @@ sub main {
   my ($minsize, $maxsize, $miniter, $maxiter, $dimsize, $testpath) = @_;
   $testpath ||= test_path();
 
-  my @sizes = map { int($minsize + ($maxsize - $minsize) * $_ / ($dimsize-1)) } 0..($dimsize-1);
-  my @iters = map { int($miniter + ($maxiter - $miniter) * $_ / ($dimsize-1)) } 0..($dimsize-1);
+  my @sizes =
+    map { int($minsize + ($maxsize - $minsize) * $_ / ($dimsize - 1)) }
+    0 .. ($dimsize - 1);
+  my @iters =
+    map { int($miniter + ($maxiter - $miniter) * $_ / ($dimsize - 1)) }
+    0 .. ($dimsize - 1);
 
   my @tests;
   my $testidx = 0;
@@ -42,19 +46,27 @@ sub main {
     }
   }
   return 0;
-} #main()
+} ## end sub main
 
 sub make_test {
   my ($testidx, $size, $iter, $testpath) = @_;
   my $stem = sprintf("t%04d_s%05d_i%05d", $testidx, $size, $iter);
-  make_ifthen_test(File::Spec->join($testpath, "${stem}_ifthen.wren"), $size, $iter);
+  make_ifthen_test(File::Spec->join($testpath, "${stem}_ifthen.wren"),
+    $size, $iter);
 
-  make_switch_test(File::Spec->join($testpath, "${stem}_switch.wren"), $size, $iter);
-  make_switch_hoisted_test_test(File::Spec->join($testpath, "${stem}_switch_hoisted_test.wren"), $size, $iter);
+  make_switch_test(File::Spec->join($testpath, "${stem}_switch.wren"),
+    $size, $iter);
+  make_switch_hoisted_test_test(
+    File::Spec->join($testpath, "${stem}_switch_hoisted_test.wren"),
+    $size, $iter);
 
   make_fn_test(File::Spec->join($testpath, "${stem}_fn.wren"), $size, $iter);
-  make_fn_hoisted_test_test(File::Spec->join($testpath, "${stem}_fn_hoisted_test.wren"), $size, $iter);
-}
+  make_fn_hoisted_test_test(
+    File::Spec->join($testpath, "${stem}_fn_hoisted_test.wren"),
+    $size, $iter);
+} ## end sub make_test
+
+### The individual tests ####################################################
 
 sub make_switch_test {
   my ($fn, $size, $iter) = @_;
@@ -67,8 +79,8 @@ for(iter in 1..$iter) {
   switch(topic) {
 EOT
 
-  foreach my $case (1..$size) {
-    print $fh "    \"$case\".part: Fiber.abort(\"matched $case\")\n"
+  foreach my $case (1 .. $size) {
+    print $fh "    \"$case\".part: Fiber.abort(\"matched $case\")\n";
   }
 
   print $fh <<EOT;
@@ -76,7 +88,7 @@ EOT
 } //iter
 EOT
   close $fh;
-}
+} ## end sub make_switch_test
 
 sub make_fn_test {
   my ($fn, $size, $iter) = @_;
@@ -89,8 +101,9 @@ for(iter in 1..$iter) {
   switch(topic) {
 EOT
 
-  foreach my $case (1..$size) {
-    print $fh "    {|v| \"$case\".contains(v) }: Fiber.abort(\"matched $case\")\n"
+  foreach my $case (1 .. $size) {
+    print $fh
+      "    {|v| \"$case\".contains(v) }: Fiber.abort(\"matched $case\")\n";
   }
 
   print $fh <<EOT;
@@ -98,7 +111,7 @@ EOT
 } //iter
 EOT
   close $fh;
-}
+} ## end sub make_fn_test
 
 sub make_switch_hoisted_test_test {
   my ($fn, $size, $iter) = @_;
@@ -107,7 +120,7 @@ sub make_switch_hoisted_test_test {
   open my $fh, '>', $fn;
 
   # Hoist out of the loop
-  foreach my $case (1..$size) {
+  foreach my $case (1 .. $size) {
     print $fh "var case$case = \"$case\".part\n";
   }
 
@@ -118,8 +131,8 @@ for(iter in 1..$iter) {
   switch(topic) {
 EOT
 
-  foreach my $case (1..$size) {
-    print $fh "    case$case: Fiber.abort(\"matched $case\")\n"
+  foreach my $case (1 .. $size) {
+    print $fh "    case$case: Fiber.abort(\"matched $case\")\n";
   }
 
   print $fh <<EOT;
@@ -127,7 +140,7 @@ EOT
 } //iter
 EOT
   close $fh;
-}
+} ## end sub make_switch_hoisted_test_test
 
 sub make_fn_hoisted_test_test {
   my ($fn, $size, $iter) = @_;
@@ -136,7 +149,7 @@ sub make_fn_hoisted_test_test {
   open my $fh, '>', $fn;
 
   # Hoist out of the loop
-  foreach my $case (1..$size) {
+  foreach my $case (1 .. $size) {
     print $fh "var case$case = Fn.new { |v| \"$case\".contains(v) }\n";
   }
 
@@ -148,8 +161,8 @@ EOT
 
   print $fh "  switch(topic) {\n";
 
-  foreach my $case (1..$size) {
-    print $fh "    case$case: Fiber.abort(\"matched $case\")\n"
+  foreach my $case (1 .. $size) {
+    print $fh "    case$case: Fiber.abort(\"matched $case\")\n";
   }
 
   print $fh <<EOT;
@@ -157,7 +170,7 @@ EOT
 } //iter
 EOT
   close $fh;
-}
+} ## end sub make_fn_hoisted_test_test
 
 sub make_ifthen_test {
   my ($fn, $size, $iter) = @_;
@@ -169,20 +182,22 @@ for(iter in 1..$iter) {
   var topic = "a" // can't possibly match
 EOT
 
-  foreach my $case (1..$size) {
+  foreach my $case (1 .. $size) {
     print $fh "  } else" unless $case == 1;
     print $fh <<EOT;
   if("$case".contains(topic)) {
     Fiber.abort("matched $case")
 EOT
-  }
+  } ## end foreach my $case (1 .. $size)
 
   print $fh <<EOT;
   } //last endif
 } //iter
 EOT
   close $fh;
-}
+} ## end sub make_ifthen_test
+
+### Helpers #################################################################
 
 sub test_path {
   my ($vol, $dirs, $file) = File::Spec->splitpath($FindBin::Bin);
@@ -193,7 +208,7 @@ sub test_path {
   my $path = File::Spec->catdir($vol, $dirs);
   mkdir $path unless -d $path;
   return $path;
-} #test_path
+} ## end sub test_path
 
 ### Docs ####################################################################
 
