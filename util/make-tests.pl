@@ -64,6 +64,9 @@ sub make_test {
   make_fn_hoisted_test_test(
     File::Spec->join($testpath, "${stem}_fn_hoisted_test.wren"),
     $size, $iter);
+
+  make_adapter_test(File::Spec->join($testpath, "${stem}_adapter.wren"),
+    $size, $iter);
 } ## end sub make_test
 
 ### The individual tests ####################################################
@@ -196,6 +199,35 @@ EOT
 EOT
   close $fh;
 } ## end sub make_ifthen_test
+
+sub make_adapter_test {
+  my ($fn, $size, $iter) = @_;
+  print STDERR "Making $fn\n";
+
+  open my $fh, '>', $fn;
+  print $fh <<EOT;
+// \@mhermier
+class PartTestAdapter {
+  construct new(value) {
+    _value = value
+  }
+  ==(rhs) { rhs.contains(_value) }
+}
+for(iter in 1..$iter) {
+  var topic = "a" // can't possibly match
+  switcheq(PartTestAdapter.new(topic)) {
+EOT
+
+  foreach my $case (1 .. $size) {
+    print $fh "    \"$case\": Fiber.abort(\"matched $case\")\n";
+  }
+
+  print $fh <<EOT;
+  } //switch
+} //iter
+EOT
+  close $fh;
+} ## end sub make_adapter_test
 
 ### Helpers #################################################################
 
