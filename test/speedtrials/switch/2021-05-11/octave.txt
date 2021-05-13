@@ -1,0 +1,11 @@
+How I made the plot from <https://github.com/wren-lang/wren/pull/1009#issuecomment-839369074>:
+
+cd Documents/
+data=csvread('Untitled 1.csv')
+[xs,ys] = meshgrid([1 13 25 37 50],[100 575 1050 1525 2000])
+zs = griddata(data(:,1),data(:,2),data(:,3),xs,ys);
+surfc(xs, ys, zs)
+xlabel 'foo'
+xlabel 'Cases'
+ylabel 'Iters'
+zlabel 'if-then rate / switch rate'
