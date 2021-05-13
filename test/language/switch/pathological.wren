@@ -16,3 +16,7 @@ switch(1){
 switch(1){
   1: System.print("yes")      // expect: yes
 }
+
+switch(1){
+  1: 1    // the statement can be an expression
+}
