@@ -6,7 +6,7 @@ make-tests.pl - Make tests of switch vs. if/then
 
 =head1 SYNOPSIS
 
-  make-tests.pl <min size> <max size> <min iters> <max iters> <dimsize>
+  make-tests.pl <min size> <max size> <min iters> <max iters> <dimsize> [output dir]
 
 Makes C<dimsize^2> test cases, evenly spread on size (number of cases) and
 iters (number of times through the loop).
@@ -26,14 +26,15 @@ exit main(@ARGV);
 ### main ####################################################################
 
 sub main {
-  pod2usage(2) unless @_ == 5;
-  my ($minsize, $maxsize, $miniter, $maxiter, $dimsize) = @_;
+  pod2usage(2) unless @_ == 5 || @_ == 6;
+  my ($minsize, $maxsize, $miniter, $maxiter, $dimsize, $testpath) = @_;
+  $testpath ||= test_path();
+
   my @sizes = map { int($minsize + ($maxsize - $minsize) * $_ / ($dimsize-1)) } 0..($dimsize-1);
   my @iters = map { int($miniter + ($maxiter - $miniter) * $_ / ($dimsize-1)) } 0..($dimsize-1);
 
   my @tests;
   my $testidx = 0;
-  my $testpath = test_path();
 
   foreach my $iter (@iters) {
     foreach my $size (@sizes) {
@@ -46,11 +47,13 @@ sub main {
 sub make_test {
   my ($testidx, $size, $iter, $testpath) = @_;
   my $stem = sprintf("t%04d_s%05d_i%05d", $testidx, $size, $iter);
-  make_switch_test(File::Spec->join($testpath, "${stem}_switch.wren"), $size, $iter);
-  make_fn_test(File::Spec->join($testpath, "${stem}_fn.wren"), $size, $iter);
-  make_switch_hoisted_test_test(File::Spec->join($testpath, "${stem}_switch_hoisted_test.wren"), $size, $iter);
-  make_fn_hoisted_test_test(File::Spec->join($testpath, "${stem}_fn_hoisted_test.wren"), $size, $iter);
   make_ifthen_test(File::Spec->join($testpath, "${stem}_ifthen.wren"), $size, $iter);
+
+  make_switch_test(File::Spec->join($testpath, "${stem}_switch.wren"), $size, $iter);
+  make_switch_hoisted_test_test(File::Spec->join($testpath, "${stem}_switch_hoisted_test.wren"), $size, $iter);
+
+  make_fn_test(File::Spec->join($testpath, "${stem}_fn.wren"), $size, $iter);
+  make_fn_hoisted_test_test(File::Spec->join($testpath, "${stem}_fn_hoisted_test.wren"), $size, $iter);
 }
 
 sub make_switch_test {
@@ -102,17 +105,18 @@ sub make_switch_hoisted_test_test {
   print STDERR "Making $fn\n";
 
   open my $fh, '>', $fn;
-  die "TODO FIXME --- this is wrong --- the case\$case need to be created outside the loop";
+
+  # Hoist out of the loop
+  foreach my $case (1..$size) {
+    print $fh "var case$case = \"$case\".part\n";
+  }
+
+  # The loop
   print $fh <<EOT;
 for(iter in 1..$iter) {
   var topic = "a" // can't possibly match
+  switch(topic) {
 EOT
-
-  foreach my $case (1..$size) {
-    print $fh "  var case$case = \"$case\".part\n";
-  }
-
-  print $fh "  switch(topic) {\n";
 
   foreach my $case (1..$size) {
     print $fh "    case$case: Fiber.abort(\"matched $case\")\n"
@@ -130,15 +134,17 @@ sub make_fn_hoisted_test_test {
   print STDERR "Making $fn\n";
 
   open my $fh, '>', $fn;
-  die "TODO FIXME --- this is wrong --- the case\$case need to be created outside the loop";
+
+  # Hoist out of the loop
+  foreach my $case (1..$size) {
+    print $fh "var case$case = Fn.new { |v| \"$case\".contains(v) }\n";
+  }
+
+  # The loop
   print $fh <<EOT;
 for(iter in 1..$iter) {
   var topic = "a" // can't possibly match
 EOT
-
-  foreach my $case (1..$size) {
-    print $fh "  var case$case = Fn.new { |v| \"$case\".contains(v) }\n";
-  }
 
   print $fh "  switch(topic) {\n";
 
@@ -161,12 +167,12 @@ sub make_ifthen_test {
   print $fh <<EOT;
 for(iter in 1..$iter) {
   var topic = "a" // can't possibly match
-  if(false) { // so the loop below can be regular
 EOT
 
   foreach my $case (1..$size) {
+    print $fh "  } else" unless $case == 1;
     print $fh <<EOT;
-  } else if("$case".contains(topic)) {
+  if("$case".contains(topic)) {
     Fiber.abort("matched $case")
 EOT
   }
