@@ -1,0 +1,144 @@
++ for i in {0..8}
+++ printf t%04d 0
++ unbuffer ./util/speedtrial.pl --cpu-secs 10 --csv test/speedtrials/switch/2021-05-16/summary-2021-05-16-182700.csv test/speedtrials/switch/2021-05-16/t0000
+Running using /home/cxw/proj/wren/wren/bin/wren_test:
+test/speedtrials/switch/2021-05-16/t0000_s00010_i01000_ifthen.wren
+test/speedtrials/switch/2021-05-16/t0000_s00010_i01000_switch.wren
+test/speedtrials/switch/2021-05-16/t0000_s00010_i01000_switch_hoisted_test.wren
+Benchmark: running t0000_s00010_i01000_ifthen.wren, t0000_s00010_i01000_switch.wren, t0000_s00010_i01000_switch_hoisted_test.wren for at least 10 CPU seconds...
+.......................................................................................................................................................................................................................t0000_s00010_i01000_ifthen.wren: 11 wallclock secs ( 9.88 usr +  0.39 sys = 10.27 CPU) @ 18.79/s (n=193)
+...................................................................................................................................................................................t0000_s00010_i01000_switch.wren: 10 wallclock secs ( 9.69 usr +  0.36 sys = 10.05 CPU) @ 15.92/s (n=160)
+.......................................................................................................................................................................................t0000_s00010_i01000_switch_hoisted_test.wren: 10 wallclock secs ( 9.65 usr +  0.35 sys = 10.00 CPU) @ 16.30/s (n=163)
+Ran for 34 seconds using /home/cxw/proj/wren/wren/bin/wren_test
+                                               Rate t0000_s00010_i01000_switch.wren t0000_s00010_i01000_switch_hoisted_test.wren t0000_s00010_i01000_ifthen.wren
+t0000_s00010_i01000_switch.wren              15.9/s                              --                                          -2%                            -15%
+t0000_s00010_i01000_switch_hoisted_test.wren 16.3/s                              2%                                           --                            -13%
+t0000_s00010_i01000_ifthen.wren              18.8/s                             18%                                          15%                              --
++ for i in {0..8}
+++ printf t%04d 1
++ unbuffer ./util/speedtrial.pl --cpu-secs 10 --csv test/speedtrials/switch/2021-05-16/summary-2021-05-16-182700.csv test/speedtrials/switch/2021-05-16/t0001
+Running using /home/cxw/proj/wren/wren/bin/wren_test:
+test/speedtrials/switch/2021-05-16/t0001_s00030_i01000_ifthen.wren
+test/speedtrials/switch/2021-05-16/t0001_s00030_i01000_switch.wren
+test/speedtrials/switch/2021-05-16/t0001_s00030_i01000_switch_hoisted_test.wren
+Benchmark: running t0001_s00030_i01000_ifthen.wren, t0001_s00030_i01000_switch.wren, t0001_s00030_i01000_switch_hoisted_test.wren for at least 10 CPU seconds...
+.........................................................................................................................................................................................................t0001_s00030_i01000_ifthen.wren: 10 wallclock secs ( 9.65 usr +  0.35 sys = 10.00 CPU) @ 17.90/s (n=179)
+......................................................................................................................................................................t0001_s00030_i01000_switch.wren: 11 wallclock secs (10.08 usr +  0.40 sys = 10.48 CPU) @ 14.03/s (n=147)
+..........................................................................................................................................................................................t0001_s00030_i01000_switch_hoisted_test.wren: 10 wallclock secs ( 9.67 usr +  0.33 sys = 10.00 CPU) @ 15.40/s (n=154)
+Ran for 36 seconds using /home/cxw/proj/wren/wren/bin/wren_test
+                                               Rate t0001_s00030_i01000_switch.wren t0001_s00030_i01000_switch_hoisted_test.wren t0001_s00030_i01000_ifthen.wren
+t0001_s00030_i01000_switch.wren              14.0/s                              --                                          -9%                            -22%
+t0001_s00030_i01000_switch_hoisted_test.wren 15.4/s                             10%                                           --                            -14%
+t0001_s00030_i01000_ifthen.wren              17.9/s                             28%                                          16%                              --
++ for i in {0..8}
+++ printf t%04d 2
++ unbuffer ./util/speedtrial.pl --cpu-secs 10 --csv test/speedtrials/switch/2021-05-16/summary-2021-05-16-182700.csv test/speedtrials/switch/2021-05-16/t0002
+Running using /home/cxw/proj/wren/wren/bin/wren_test:
+test/speedtrials/switch/2021-05-16/t0002_s00050_i01000_ifthen.wren
+test/speedtrials/switch/2021-05-16/t0002_s00050_i01000_switch.wren
+test/speedtrials/switch/2021-05-16/t0002_s00050_i01000_switch_hoisted_test.wren
+Benchmark: running t0002_s00050_i01000_ifthen.wren, t0002_s00050_i01000_switch.wren, t0002_s00050_i01000_switch_hoisted_test.wren for at least 10 CPU seconds...
+..............................................................................................................................................................................................t0002_s00050_i01000_ifthen.wren: 11 wallclock secs ( 9.83 usr +  0.35 sys = 10.18 CPU) @ 16.70/s (n=170)
+...........................................................................................................................................t0002_s00050_i01000_switch.wren: 10 wallclock secs ( 9.64 usr +  0.49 sys = 10.13 CPU) @ 11.25/s (n=114)
+.....................................................................................................................................................................................t0002_s00050_i01000_switch_hoisted_test.wren: 10 wallclock secs ( 9.81 usr +  0.30 sys = 10.11 CPU) @ 14.84/s (n=150)
+Ran for 36 seconds using /home/cxw/proj/wren/wren/bin/wren_test
+                                               Rate t0002_s00050_i01000_switch.wren t0002_s00050_i01000_switch_hoisted_test.wren t0002_s00050_i01000_ifthen.wren
+t0002_s00050_i01000_switch.wren              11.3/s                              --                                         -24%                            -33%
+t0002_s00050_i01000_switch_hoisted_test.wren 14.8/s                             32%                                           --                            -11%
+t0002_s00050_i01000_ifthen.wren              16.7/s                             48%                                          13%                              --
++ for i in {0..8}
+++ printf t%04d 3
++ unbuffer ./util/speedtrial.pl --cpu-secs 10 --csv test/speedtrials/switch/2021-05-16/summary-2021-05-16-182700.csv test/speedtrials/switch/2021-05-16/t0003
+Running using /home/cxw/proj/wren/wren/bin/wren_test:
+test/speedtrials/switch/2021-05-16/t0003_s00010_i05500_ifthen.wren
+test/speedtrials/switch/2021-05-16/t0003_s00010_i05500_switch.wren
+test/speedtrials/switch/2021-05-16/t0003_s00010_i05500_switch_hoisted_test.wren
+Benchmark: running t0003_s00010_i05500_ifthen.wren, t0003_s00010_i05500_switch.wren, t0003_s00010_i05500_switch_hoisted_test.wren for at least 10 CPU seconds...
+.............................................t0003_s00010_i05500_ifthen.wren: 10 wallclock secs (10.38 usr +  0.12 sys = 10.50 CPU) @  3.81/s (n=40)
+..................................t0003_s00010_i05500_switch.wren: 10 wallclock secs (10.02 usr +  0.17 sys = 10.19 CPU) @  2.94/s (n=30)
+........................................t0003_s00010_i05500_switch_hoisted_test.wren: 11 wallclock secs (10.04 usr +  0.06 sys = 10.10 CPU) @  3.27/s (n=33)
+Ran for 36 seconds using /home/cxw/proj/wren/wren/bin/wren_test
+                                               Rate t0003_s00010_i05500_switch.wren t0003_s00010_i05500_switch_hoisted_test.wren t0003_s00010_i05500_ifthen.wren
+t0003_s00010_i05500_switch.wren              2.94/s                              --                                         -10%                            -23%
+t0003_s00010_i05500_switch_hoisted_test.wren 3.27/s                             11%                                           --                            -14%
+t0003_s00010_i05500_ifthen.wren              3.81/s                             29%                                          17%                              --
++ for i in {0..8}
+++ printf t%04d 4
++ unbuffer ./util/speedtrial.pl --cpu-secs 10 --csv test/speedtrials/switch/2021-05-16/summary-2021-05-16-182700.csv test/speedtrials/switch/2021-05-16/t0004
+Running using /home/cxw/proj/wren/wren/bin/wren_test:
+test/speedtrials/switch/2021-05-16/t0004_s00030_i05500_ifthen.wren
+test/speedtrials/switch/2021-05-16/t0004_s00030_i05500_switch.wren
+test/speedtrials/switch/2021-05-16/t0004_s00030_i05500_switch_hoisted_test.wren
+Benchmark: running t0004_s00030_i05500_ifthen.wren, t0004_s00030_i05500_switch.wren, t0004_s00030_i05500_switch_hoisted_test.wren for at least 10 CPU seconds...
+...........................................t0004_s00030_i05500_ifthen.wren: 10 wallclock secs ( 9.97 usr +  0.10 sys = 10.07 CPU) @  3.57/s (n=36)
+.................................t0004_s00030_i05500_switch.wren: 10 wallclock secs ( 9.85 usr +  0.20 sys = 10.05 CPU) @  2.59/s (n=26)
+..................................t0004_s00030_i05500_switch_hoisted_test.wren: 10 wallclock secs (10.00 usr +  0.09 sys = 10.09 CPU) @  2.97/s (n=30)
+Ran for 36 seconds using /home/cxw/proj/wren/wren/bin/wren_test
+                                               Rate t0004_s00030_i05500_switch.wren t0004_s00030_i05500_switch_hoisted_test.wren t0004_s00030_i05500_ifthen.wren
+t0004_s00030_i05500_switch.wren              2.59/s                              --                                         -13%                            -28%
+t0004_s00030_i05500_switch_hoisted_test.wren 2.97/s                             15%                                           --                            -17%
+t0004_s00030_i05500_ifthen.wren              3.57/s                             38%                                          20%                              --
++ for i in {0..8}
+++ printf t%04d 5
++ unbuffer ./util/speedtrial.pl --cpu-secs 10 --csv test/speedtrials/switch/2021-05-16/summary-2021-05-16-182700.csv test/speedtrials/switch/2021-05-16/t0005
+Running using /home/cxw/proj/wren/wren/bin/wren_test:
+test/speedtrials/switch/2021-05-16/t0005_s00050_i05500_ifthen.wren
+test/speedtrials/switch/2021-05-16/t0005_s00050_i05500_switch.wren
+test/speedtrials/switch/2021-05-16/t0005_s00050_i05500_switch_hoisted_test.wren
+Benchmark: running t0005_s00050_i05500_ifthen.wren, t0005_s00050_i05500_switch.wren, t0005_s00050_i05500_switch_hoisted_test.wren for at least 10 CPU seconds...
+........................................t0005_s00050_i05500_ifthen.wren:  9 wallclock secs (10.02 usr +  0.10 sys = 10.12 CPU) @  3.26/s (n=33)
+..........................t0005_s00050_i05500_switch.wren: 10 wallclock secs ( 9.81 usr +  0.20 sys = 10.01 CPU) @  2.10/s (n=21)
+.................................t0005_s00050_i05500_switch_hoisted_test.wren: 10 wallclock secs (10.08 usr +  0.07 sys = 10.15 CPU) @  2.86/s (n=29)
+Ran for 37 seconds using /home/cxw/proj/wren/wren/bin/wren_test
+                                               Rate t0005_s00050_i05500_switch.wren t0005_s00050_i05500_switch_hoisted_test.wren t0005_s00050_i05500_ifthen.wren
+t0005_s00050_i05500_switch.wren              2.10/s                              --                                         -27%                            -36%
+t0005_s00050_i05500_switch_hoisted_test.wren 2.86/s                             36%                                           --                            -12%
+t0005_s00050_i05500_ifthen.wren              3.26/s                             55%                                          14%                              --
++ for i in {0..8}
+++ printf t%04d 6
++ unbuffer ./util/speedtrial.pl --cpu-secs 10 --csv test/speedtrials/switch/2021-05-16/summary-2021-05-16-182700.csv test/speedtrials/switch/2021-05-16/t0006
+Running using /home/cxw/proj/wren/wren/bin/wren_test:
+test/speedtrials/switch/2021-05-16/t0006_s00010_i10000_ifthen.wren
+test/speedtrials/switch/2021-05-16/t0006_s00010_i10000_switch.wren
+test/speedtrials/switch/2021-05-16/t0006_s00010_i10000_switch_hoisted_test.wren
+Benchmark: running t0006_s00010_i10000_ifthen.wren, t0006_s00010_i10000_switch.wren, t0006_s00010_i10000_switch_hoisted_test.wren for at least 10 CPU seconds...
+...........................t0006_s00010_i10000_ifthen.wren: 11 wallclock secs (10.32 usr +  0.06 sys = 10.38 CPU) @  2.12/s (n=22)
+.....................t0006_s00010_i10000_switch.wren: 11 wallclock secs (10.00 usr +  0.14 sys = 10.14 CPU) @  1.68/s (n=17)
+......................t0006_s00010_i10000_switch_hoisted_test.wren: 10 wallclock secs (10.07 usr +  0.04 sys = 10.11 CPU) @  1.78/s (n=18)
+Ran for 38 seconds using /home/cxw/proj/wren/wren/bin/wren_test
+                                               Rate t0006_s00010_i10000_switch.wren t0006_s00010_i10000_switch_hoisted_test.wren t0006_s00010_i10000_ifthen.wren
+t0006_s00010_i10000_switch.wren              1.68/s                              --                                          -6%                            -21%
+t0006_s00010_i10000_switch_hoisted_test.wren 1.78/s                              6%                                           --                            -16%
+t0006_s00010_i10000_ifthen.wren              2.12/s                             26%                                          19%                              --
++ for i in {0..8}
+++ printf t%04d 7
++ unbuffer ./util/speedtrial.pl --cpu-secs 10 --csv test/speedtrials/switch/2021-05-16/summary-2021-05-16-182700.csv test/speedtrials/switch/2021-05-16/t0007
+Running using /home/cxw/proj/wren/wren/bin/wren_test:
+test/speedtrials/switch/2021-05-16/t0007_s00030_i10000_ifthen.wren
+test/speedtrials/switch/2021-05-16/t0007_s00030_i10000_switch.wren
+test/speedtrials/switch/2021-05-16/t0007_s00030_i10000_switch_hoisted_test.wren
+Benchmark: running t0007_s00030_i10000_ifthen.wren, t0007_s00030_i10000_switch.wren, t0007_s00030_i10000_switch_hoisted_test.wren for at least 10 CPU seconds...
+.........................t0007_s00030_i10000_ifthen.wren: 10 wallclock secs (10.02 usr +  0.04 sys = 10.06 CPU) @  1.99/s (n=20)
+...................t0007_s00030_i10000_switch.wren: 10 wallclock secs (10.05 usr +  0.17 sys = 10.22 CPU) @  1.47/s (n=15)
+.....................t0007_s00030_i10000_switch_hoisted_test.wren: 10 wallclock secs (10.42 usr +  0.06 sys = 10.48 CPU) @  1.62/s (n=17)
+Ran for 39 seconds using /home/cxw/proj/wren/wren/bin/wren_test
+                                               Rate t0007_s00030_i10000_switch.wren t0007_s00030_i10000_switch_hoisted_test.wren t0007_s00030_i10000_ifthen.wren
+t0007_s00030_i10000_switch.wren              1.47/s                              --                                         -10%                            -26%
+t0007_s00030_i10000_switch_hoisted_test.wren 1.62/s                             11%                                           --                            -18%
+t0007_s00030_i10000_ifthen.wren              1.99/s                             35%                                          23%                              --
++ for i in {0..8}
+++ printf t%04d 8
++ unbuffer ./util/speedtrial.pl --cpu-secs 10 --csv test/speedtrials/switch/2021-05-16/summary-2021-05-16-182700.csv test/speedtrials/switch/2021-05-16/t0008
+Running using /home/cxw/proj/wren/wren/bin/wren_test:
+test/speedtrials/switch/2021-05-16/t0008_s00050_i10000_ifthen.wren
+test/speedtrials/switch/2021-05-16/t0008_s00050_i10000_switch.wren
+test/speedtrials/switch/2021-05-16/t0008_s00050_i10000_switch_hoisted_test.wren
+Benchmark: running t0008_s00050_i10000_ifthen.wren, t0008_s00050_i10000_switch.wren, t0008_s00050_i10000_switch_hoisted_test.wren for at least 10 CPU seconds...
+.......................t0008_s00050_i10000_ifthen.wren: 10 wallclock secs (10.33 usr +  0.05 sys = 10.38 CPU) @  1.83/s (n=19)
+..............t0008_s00050_i10000_switch.wren: 10 wallclock secs (10.00 usr +  0.22 sys = 10.22 CPU) @  1.17/s (n=12)
+....................t0008_s00050_i10000_switch_hoisted_test.wren: 10 wallclock secs (10.21 usr +  0.04 sys = 10.25 CPU) @  1.56/s (n=16)
+Ran for 38 seconds using /home/cxw/proj/wren/wren/bin/wren_test
+                                               Rate t0008_s00050_i10000_switch.wren t0008_s00050_i10000_switch_hoisted_test.wren t0008_s00050_i10000_ifthen.wren
+t0008_s00050_i10000_switch.wren              1.17/s                              --                                         -25%                            -36%
+t0008_s00050_i10000_switch_hoisted_test.wren 1.56/s                             33%                                           --                            -15%
+t0008_s00050_i10000_ifthen.wren              1.83/s                             56%                                          17%                              --
