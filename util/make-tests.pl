@@ -22,8 +22,6 @@ use File::Spec;
 use FindBin;
 use Pod::Usage qw(pod2usage);
 
-my $FIBER = "1            //Fiber";
-
 exit main(@ARGV);
 
 ### main ####################################################################
@@ -63,16 +61,38 @@ sub make_test {
     File::Spec->join($testpath, "${stem}_switch_hoisted_test.wren"),
     $size, $iter);
 
-  make_fn_test(File::Spec->join($testpath, "${stem}_fn.wren"), $size, $iter);
-  make_fn_hoisted_test_test(
-    File::Spec->join($testpath, "${stem}_fn_hoisted_test.wren"),
-    $size, $iter);
+  # make_fn_test(File::Spec->join($testpath, "${stem}_fn.wren"), $size, $iter);
+  # make_fn_hoisted_test_test(
+  #   File::Spec->join($testpath, "${stem}_fn_hoisted_test.wren"),
+  #   $size, $iter);
+  #
+  # make_adapter_test(File::Spec->join($testpath, "${stem}_adapter.wren"),
+  #   $size, $iter);
 
-  make_adapter_test(File::Spec->join($testpath, "${stem}_adapter.wren"),
-    $size, $iter);
 } ## end sub make_test
 
 ### The individual tests ####################################################
+
+# The body of each test case
+sub BODY {
+  my $case = shift;
+  # Waste some time ---
+  #return qq(for(count in 1..10000) {
+  #  1
+  #});
+  return "1";   # nop (almost)
+  # die --- # return qq(Fiber.abort("matched $case")\n);
+}
+
+sub waste_time {
+  return <<'EOT';
+
+  // Waste some time
+  for(count in 1..1000) {
+    1
+  }
+EOT
+}
 
 sub make_switch_test {
   my ($fn, $size, $iter) = @_;
@@ -86,11 +106,12 @@ for(iter in 1..$iter) {
 EOT
 
   foreach my $case (1 .. $size) {
-    print $fh "    \"$case\".part: $FIBER.abort(\"matched $case\")\n";
+    print $fh "    \"$case\".part: @{[BODY($case)]}\n";
   }
 
   print $fh <<EOT;
   } //switch
+  @{[waste_time]}
 } //iter
 EOT
   close $fh;
@@ -109,11 +130,12 @@ EOT
 
   foreach my $case (1 .. $size) {
     print $fh
-      "    {|v| \"$case\".contains(v) }: $FIBER.abort(\"matched $case\")\n";
+      "    {|v| \"$case\".contains(v) }: @{[BODY($case)]}\n";
   }
 
   print $fh <<EOT;
   } //switch
+  @{[waste_time]}
 } //iter
 EOT
   close $fh;
@@ -138,11 +160,12 @@ for(iter in 1..$iter) {
 EOT
 
   foreach my $case (1 .. $size) {
-    print $fh "    case$case: $FIBER.abort(\"matched $case\")\n";
+    print $fh "    case$case: @{[BODY($case)]}\n";
   }
 
   print $fh <<EOT;
   } //switch
+  @{[waste_time]}
 } //iter
 EOT
   close $fh;
@@ -168,11 +191,12 @@ EOT
   print $fh "  switch(topic) {\n";
 
   foreach my $case (1 .. $size) {
-    print $fh "    case$case: $FIBER.abort(\"matched $case\")\n";
+    print $fh "    case$case: @{[BODY($case)]}\n";
   }
 
   print $fh <<EOT;
   } //switch
+  @{[waste_time]}
 } //iter
 EOT
   close $fh;
@@ -192,12 +216,13 @@ EOT
     print $fh "  } else" unless $case == 1;
     print $fh <<EOT;
   if("$case".contains(topic)) {
-    $FIBER.abort("matched $case")
+    @{[BODY($case)]}
 EOT
   } ## end foreach my $case (1 .. $size)
 
   print $fh <<EOT;
   } //last endif
+  @{[waste_time]}
 } //iter
 EOT
   close $fh;
@@ -222,11 +247,12 @@ for(iter in 1..$iter) {
 EOT
 
   foreach my $case (1 .. $size) {
-    print $fh "    \"$case\": $FIBER.abort(\"matched $case\")\n";
+    print $fh "    \"$case\": @{[BODY($case)]}\n";
   }
 
   print $fh <<EOT;
   } //switch
+  @{[waste_time]}
 } //iter
 EOT
   close $fh;
